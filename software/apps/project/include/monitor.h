@@ -40,7 +40,7 @@ typedef struct {
     /*
      * Fields
      */ 
-    uint8_t heartbeat_history[MAX_HISTORY] ;
+    ring_buffer heartbeat_history ;
 
     monitoring_mode mode ;
 
