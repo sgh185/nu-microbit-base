@@ -84,7 +84,7 @@ typedef struct monitor {
 
 
 /*
- * ----------- Base ANalysis Methods ----------
+ * ----------- Base Analysis Methods ----------
  *
  * NOTE --- The following methods implemented here are 
  * base methods that will apply to any extension of the 
@@ -101,6 +101,21 @@ bool base_is_heartbeat_falling_rapidly(monitor *self) ;
 
 void base_set_detection_status(monitor *self) ;
 
+
+/*
+ * ----------- Base Functionality Methods ----------
+ *
+ * NOTE --- The following methods implemented here are 
+ * base methods that will apply to any extension of the 
+ * monitor abstraction.
+ */ 
+
+void base_change_monitoring_mode (
+    monitor *self, 
+    monitoring_mode new_mode
+) ;
+
+void base_print_heartbeat_history(monitor *self) ;
 
 
 

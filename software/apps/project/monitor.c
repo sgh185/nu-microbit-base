@@ -4,6 +4,7 @@
  * Basic abstraction layer implementation for heartbeat monitor 
  */ 
 #include "monitor.h"
+#include "utils.h"
 
 
 /*
@@ -203,4 +204,41 @@ void base_set_detection_status(monitor *self)
 
     return;
 }
+
+
+/*
+ * ----------- Base Functionality Methods ----------
+ */ 
+
+void base_change_monitoring_mode (
+    monitor *self, 
+    monitoring_mode new_mode
+)
+{
+    /*
+     * Set @self->mode
+     */ 
+    self->mode = new_mode;
+}
+
+
+void base_print_heartbeat_history(monitor *self)
+{
+    /*
+     * Print out @self->heartbeat history using 
+     * the prefix "MONITOR"
+     */
+    rb_print(
+	"MONITOR",
+      	self->heartbeat_history
+    );
+
+
+    return;
+}
+
+
+
+
+
 
