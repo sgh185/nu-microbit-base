@@ -8,11 +8,24 @@
 
 #include "ring_buffer.h"
 
+#define modulo_incr(val, base) ((val + 1) % base)
+
 AI void _incr_rb_next(ring_buffer rb)
 {
-    rb.next_index_to_fill = ((rb.next_index_to_fill + 1) % DEFAULT_RING_BUF_SIZE);
+    uint8_t curr_idx = rb.next_index_to_fill;
+    rb.next_index_to_fill = modulo_incr(curr_idx, DEFAULT_RING_BUF_SIZE);
+    if (curr_idx > rb.next_index_to_fill) rb.wrapped |= 1;
+
+
     return;
 }
+
+
+AI bool rb_has_wrapped(ring_buffer rb)
+{
+    return !!rb.wrapped;
+}
+
 
 
 AI uint8_t rb_get (
@@ -97,4 +110,31 @@ AI void rb_find_all (
     return;
 }
 
+
+AI void rb_print (
+    const char *prefix,
+    ring_buffer rb
+)
+{
+    /*
+     * Setup
+     */ 
+    uint8_t idx;
+    uint8_t start = 
+	(rb.wrapped) ? 
+	(rb.next_index_to_fill) :
+	(0) ;	
+
+
+    /*
+     * Iterate
+     */ 
+    printf("%s ", prefix);
+    for (idx = start ; idx != start ; idx = modulo_incr(idx, DEFAULT_RING_BUF_SIZE))
+	printf("%u ", rb_get(idx));
+
+
+    printf("|\n");
+    return;
+}
 

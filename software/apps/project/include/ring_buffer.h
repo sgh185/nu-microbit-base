@@ -23,7 +23,7 @@ typedef struct {
     /*
      * State
      */ 
-    uint8_t next_index_to_fill ;
+    uint8_t next_index_to_fill, wrapped ;
 
 
 } ring_buffer ;
@@ -40,14 +40,30 @@ typedef struct {
 
 /*
  * _incr_rb_next
- *
+*
  * Increments the ring buffer's .next_index_to_fill field
+ * Also sets .wrapped if the .next_index_to_fill wraps 
+ * around to the beginning of the buffer
  *
  * @rb
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
 AI void _incr_rb_next(ring_buffer rb) ;
+
+
+/*
+ * rb_has_wrapped
+ *
+ * Checks if the ring buffer has wrapped around 
+ * to the beginning of .buf at any point by 
+ * checking .wrapped field
+ *
+ * @rb
+ * - Ring buffer to push to
+ * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
+ */ 
+AI bool rb_has_wrapped(ring_buffer rb) ;
 
 
 /*
@@ -139,3 +155,21 @@ AI void rb_find_all (
     uint8_t *num_occ
 ) ;
 
+
+/*
+ * rb_print
+ *
+ * Prints the ring buffer's contents
+ *
+ * @prefix
+ * - Printing will start with "@prefix: " in rb_print
+ * - typeof(@rb) = const char *
+ *
+ * @rb
+ * - Ring buffer to look in
+ * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
+ */ 
+AI void rb_print (
+    const char *prefix,
+    ring_buffer rb
+) ;
