@@ -118,6 +118,20 @@ void base_change_monitoring_mode (
 void base_print_heartbeat_history(monitor *self) ;
 
 
+/*
+ * ---------- Base Stubs ----------
+ *
+ * NOTE --- These methods are stubbed, whichever 
+ * modules end up implementing a full monitor must
+ * implement these methods fully
+ */ 
+void base_sensor_handler_setup(monitor *self) ;
+
+void base_sensor_handler_cleanup(monitor *self) ;
+
+void base_heartbeat_timer_handler(void *state) ;
+
+
 
 
 
