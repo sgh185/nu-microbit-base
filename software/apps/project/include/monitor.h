@@ -1,5 +1,5 @@
 /*
- * sensor.h
+ * monitor.h
  *
  * Abstraction layer for heartbeat monitor 
  */ 
@@ -12,9 +12,11 @@
 /*
  * Declarations, types
  */ 
-#define MAX_HISTORY 64
 #define HIGH_HEARTBEAT 200
 #define LOW_HEARTBEAT 40
+#define RAPID_RISE 16.0F
+#define RAPID_FALL -16.0F
+#define RECENT 5
 
 enum monitoring_mode {
     
@@ -35,7 +37,7 @@ enum detection_status {
 } ;
 
 
-typedef struct {
+typedef struct monitor {
 
     /*
      * Fields
@@ -50,30 +52,57 @@ typedef struct {
     /*
      * Analysis methods
      */
-    void (*is_heartbeat_high)(void) ; 
+    bool (*is_heartbeat_high)(monitor *self) ; 
     
-    void (*is_heartbeat_low)(void) ; 
+    bool (*is_heartbeat_low)(monitor *self) ; 
     
-    void (*is_heartbeat_rising_rapidly)(void) ; 
+    bool (*is_heartbeat_rising_rapidly)(monitor *self) ; 
     
-    void (*is_heartbeat_falling_rapidly)(void) ; 
+    bool (*is_heartbeat_falling_rapidly)(monitor *self) ; 
+
+    void (*set_detection_status)(monitor *self) ;
 
 
     /*
-     * Functionality ethods
+     * Functionality methods
      */ 
-    void (*change_monitoring_mode)(monitoring_mode new_mode) ;
+    void (*change_monitoring_mode)(
+	monitor *self, 
+	monitoring_mode new_mode
+    ) ;
 
-    void (*print_heartbeat_history)(void) ;
+    void (*print_heartbeat_history)(monitor *self) ;
 
-    void (*sensor_handler_setup)(void) ;
+    void (*sensor_handler_setup)(monitor *self) ;
     
-    void (*sensor_handler_cleanup)(void) ;
+    void (*sensor_handler_cleanup)(monitor *self) ;
 
     void (*heartbeat_timer_handler)(void *state) ;
 
 
 } monitor ;
+
+
+/*
+ * ----------- Base ANalysis Methods ----------
+ *
+ * NOTE --- The following methods implemented here are 
+ * base methods that will apply to any extension of the 
+ * monitor abstraction.
+ */ 
+
+bool base_is_heartbeat_high(monitor *self) ;
+    
+bool base_is_heartbeat_low(monitor *self) ; 
+
+bool base_is_heartbeat_rising_rapidly(monitor *self) ; 
+    
+bool base_is_heartbeat_falling_rapidly(monitor *self) ; 
+
+void base_set_detection_status(monitor *self) ;
+
+
+
 
 
 
