@@ -21,4 +21,7 @@
 #define SIMULATOR 1
 #define SENSOR 0
 
+#define AI __attribute__((always_inline))
 
+#define DEBUG_ON 1
+#define DEBUG if (DEBUG_ON) printf
