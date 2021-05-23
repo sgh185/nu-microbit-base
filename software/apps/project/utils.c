@@ -21,7 +21,7 @@ AI uint32_t __sum (
      */ 
     uint32_t sum = 0;
     for (uint8_t i = 0 ; i < num_values ; i++)
-	sum += ((uint16_t) values[i]);
+	sum += ((uint32_t) values[i]);
 
     return sum;
 }
