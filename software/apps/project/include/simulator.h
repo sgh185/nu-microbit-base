@@ -51,7 +51,7 @@ typedef struct {
  */ 
 extern float a_terms[3] ;
 
-extern float curr_a_tem ;
+extern float curr_a_term ;
 
 
 

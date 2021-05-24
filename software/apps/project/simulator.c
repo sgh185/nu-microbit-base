@@ -7,7 +7,9 @@
 #include "simulator.h"
 
 
-a_terms = { 0.05F, 0.10F, 0.15F } ;
+float a_terms[3] = { 0.05F, 0.10F, 0.15F } ;
+
+float curr_a_term ;
 
 
 /*
