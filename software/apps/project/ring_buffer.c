@@ -9,6 +9,7 @@
 #include "ring_buffer.h"
 
 #define modulo_incr(val, base) ((val + 1) % base)
+#define module_decr(val, base) ((val + base - 1) % base)
 
 AI void _incr_rb_next(ring_buffer rb)
 {
@@ -111,6 +112,52 @@ AI void rb_find_all (
 }
 
 
+AI void rb_get_last_n_entries (
+    ring_buffer rb,
+    uint8_t *arr,
+    uint8_t N,
+    uint8_t *num_fetched
+)
+{
+    /*
+     * Setup
+     */ 
+    if (!(rb.wrapped) && (rb.next_index_to_fill == 0)) return;
+    
+    uint8_t last_filled = 
+	modulo_decr(
+	    rb.next_index_to_fill,
+	    DEFAULT_RING_BUF_SIZE
+	);
+
+    uint8_t idx = last_filled;
+    uint8_t local_num_fetched = 0;
+
+    
+    /*
+     * Iterate
+     */
+    while (local_num_fetched < N)
+    {
+	arr[local_num_fetched] = rb_get(idx, rb);
+	local_num_fetched++;
+	modulo_decr(idx, DEFAULT_RING_BUF_SIZE);
+	if (true
+	    && !rb.wrapped
+	    && idx == 0) break;
+    }
+
+
+    /*
+     * Set state
+     */ 
+    *num_fetched = local_num_fetched;
+
+
+    return;
+}
+
+
 AI void rb_print (
     const char *prefix,
     ring_buffer rb
@@ -131,7 +178,7 @@ AI void rb_print (
      */ 
     printf("%s ", prefix);
     for (idx = start ; idx != start ; idx = modulo_incr(idx, DEFAULT_RING_BUF_SIZE))
-	printf("%u ", rb_get(idx));
+	printf("%u ", rb_get(idx, rb));
 
 
     printf("|\n");

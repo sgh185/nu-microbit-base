@@ -156,6 +156,38 @@ AI void rb_find_all (
 ) ;
 
 
+
+/*
+ * rb_get_last_n_entries 
+ *
+ * Get the last "n" entries of the ring buffer
+ * and store them into an array passed into
+ * this function
+ *
+ * @rb
+ * - Ring buffer to look in
+ * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
+ *
+ * @arr
+ * - Array to populate with latest entries 
+ * - typeof(@arr) = uint8_t * 
+ *
+ * @N
+ * - Maximum number of entries to fetch
+ * - typeof(@N) = uint8_t
+ *
+ * @num_fetched
+ * - Variable to set with latest entries fetched 
+ * - typeof(@num_fetched) = uint8_t * (ptr to variable) 
+ */ 
+AI void rb_get_last_n_entries (
+    ring_buffer rb,
+    uint8_t *arr,
+    uint8_t N,
+    uint8_t num_fetched
+) ;
+
+
 /*
  * rb_print
  *
@@ -173,3 +205,4 @@ AI void rb_print (
     const char *prefix,
     ring_buffer rb
 ) ;
+
