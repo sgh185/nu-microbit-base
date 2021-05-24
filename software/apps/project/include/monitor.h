@@ -13,7 +13,7 @@
  * Declarations, types
  */ 
 #define HIGH_HEARTBEAT 200
-#define LOW_HEARTBEAT 40
+#define LOW_HEARTBEAT 50
 #define RAPID_RISE 16.0F
 #define RAPID_FALL -16.0F
 #define RECENT 5
