@@ -67,9 +67,35 @@ static uint8_t _calculate_quadratic_start_input(simulator *sim)
 }
 
 
+void simulate_new_heartbeat(simulator *sim)
+{
+    /*
+     * TOP
+     *
+     * Simulate a new heartbeat using @sim->heartbeat_expander
+     */
+
+    /*
+     * Fetch new heartbeat
+     */  
+    uint8_t new_heartbeat = sim->heartbeat_expander(sim);
+
+
+    /*
+     * Update state in @sim
+     */ 
+    sim->last_heartbeat_simulated = new_heartbeat; 
+
+
+    return;
+}
+
+
 void switch_simulation_settings(simulator *sim)
 {
     /*
+     * TOP
+     *
      * Randomly set the new settings that @sim should
      * simulate. Set the following metrics:
      * - Sign/@self->direction
@@ -319,16 +345,17 @@ void simulator_monitor_handler_setup(monitor *self)
     /*
      * Set functionality methods
      */ 
+    self->get_new_heartbeat = simulator_get_new_heartbeat;
     self->change_monitoring_mode = base_change_monitoring_mode; 
     self->print_heartbeat_history = base_print_heartbeat_history;
     self->monitor_handler_cleanup = simulator_monitor_handler_cleanup; 
-    self->heartbeat_timer_handler = simulator_heartbeat_timer_handler;
+    self->heartbeat_timer_handler = base_heartbeat_timer_handler;
 
 
     /*
      * Allocate global simulator object
      */ 
-    sim = malloc(sizeof(simulator));
+    sim = calloc(1, sizeof(simulator));
     assert(!!sim && "simulator_monitor_handler_setup: malloc failed");
 
 
@@ -355,5 +382,28 @@ void simulator_monitor_handler_cleanup(monitor *self)
 }
 
 
-void simulator_heartbeat_timer_handler(void *state) ;
+void simulator_get_new_heartbeat(monitor *self)
+{
+    /*
+     * TOP
+     *
+     * Simulate a new heartbeat and update the monitor's
+     * state to reflect the new value.
+     */ 
+
+    /*
+     * Simulate a new heartbeat using the global 
+     * simulator object, "sim" 
+     */ 
+    simulate_new_heartbeat(sim);
+
+
+    /*
+     * Update @self->heartbeat_history
+     */
+    rb_push(
+	sim->last_heartbeat_simulated,
+	self->heartbeat_history
+    );
+}
 

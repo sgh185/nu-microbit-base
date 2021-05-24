@@ -46,6 +46,8 @@ typedef struct {
      */ 
     uint8_t num_seconds_to_simulate_curr_settings ;
 
+    uint8_t num_seconds_simulated ;
+
     uint8_t last_heartbeat_simulated ;
 
     uint8_t heartbeat_change_val ; /* Value to change the heartbeat by */
@@ -83,6 +85,8 @@ extern float curr_a_term ;
 /*
  * ---------- Simulation Methods ----------
  */ 
+void simulate_new_heartbeat(simulator *sim) ;
+
 void switch_simulation_settings(simulator *sim);
 
 uint8_t simulate_exponential_expansion(simulator *self);
@@ -104,5 +108,6 @@ void simulator_monitor_handler_setup(monitor *self) ;
 
 void simulator_monitor_handler_cleanup(monitor *self) ;
 
-void simulator_heartbeat_timer_handler(void *state) ;
+void simulator_get_new_heartbeat(monitor *self) ;
+
 
