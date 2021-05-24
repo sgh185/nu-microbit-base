@@ -238,6 +238,40 @@ void base_print_heartbeat_history(monitor *self)
 }
 
 
+monitor *bootstrap_monitor(void (*setup_func)(monitor *))
+{
+    /*
+     * TOP
+     *
+     * Bootstrap the monitor setup --- allocate a monitor
+     * and set @setup_func into the new monitor. Call the
+     * newly set setup method from there
+     */ 
+
+    /*
+     * Allocate a new monitor
+     */ 
+    monitor *new_monitor = malloc(sizeof(monitor));
+    assert(!!new_monitor && "bootstrap_monitor: malloc failed");
+
+
+    /*
+     * Set "new_monitor"->monitor_handler_setup
+     */ 
+    new_monitor->monitor_handler_setup = setup_func;
+
+
+    /*
+     * Set up the monitor properly using @setup_func
+     */
+    new_monitor->monitor_handler_setup(new_monitor);
+
+
+    return;
+}
+
+
+
 /*
  * ---------- Base Stubs ----------
  */ 

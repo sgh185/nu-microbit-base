@@ -117,6 +117,8 @@ void base_change_monitoring_mode (
 
 void base_print_heartbeat_history(monitor *self) ;
 
+monitor *bootstrap_monitor(void (*setup_func)(monitor *)) ;
+
 
 /*
  * ---------- Base Stubs ----------
