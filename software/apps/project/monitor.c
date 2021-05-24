@@ -30,8 +30,9 @@ static uint8_t _average_recent_heartbeat_history(monitor *self)
     uint8_t num_recent_entries_received = 0;
     rb_get_last_n_entries(
 	self->heartbeat_history,
+	(uint8_t *) &entries_to_receive,
 	num_recent_entries,
-	&num_recent_entries_received	
+	(uint8_t *) &num_recent_entries_received	
     );
 
 
@@ -40,8 +41,8 @@ static uint8_t _average_recent_heartbeat_history(monitor *self)
      */ 
     uint8_t average = 
 	(uint8_t) __average(
-	    entries_to_receive, 
-	    num_recent_entries_received
+	    (uint32_t *) &entries_to_receive, 
+	    (uint32_t) num_recent_entries_received
 	);
 
 
@@ -66,8 +67,9 @@ static float _rate_recent_heartbeat_history(monitor *self)
     uint8_t num_recent_entries_received = 0;
     rb_get_last_n_entries(
 	self->heartbeat_history,
+	(uint8_t *) &entries_to_receive,
 	num_recent_entries,
-	&num_recent_entries_received	
+	(uint8_t *) &num_recent_entries_received	
     );
 
 
@@ -83,9 +85,9 @@ static float _rate_recent_heartbeat_history(monitor *self)
      */ 
     float rate = 
 	__lsr_slope(
-	    entries_to_receive, 
-	    &y_values, 
-	    num_recent_entries_received
+	    (uint32_t *) &entries_to_receive, 
+	    (uint32_t *) &y_values, 
+	    (uint32_t) num_recent_entries_received
 	);
 
 
@@ -93,7 +95,7 @@ static float _rate_recent_heartbeat_history(monitor *self)
 }
 
 
-void base_is_heartbeat_high(monitor *self)
+bool base_is_heartbeat_high(monitor *self)
 {
     /*
      * TOP
@@ -116,7 +118,7 @@ void base_is_heartbeat_high(monitor *self)
 } 
    
 
-void base_is_heartbeat_low(monitor *self)
+bool base_is_heartbeat_low(monitor *self)
 {
     /*
      * TOP
@@ -139,7 +141,7 @@ void base_is_heartbeat_low(monitor *self)
 } 
 
 
-void base_is_heartbeat_rising_rapidly(monitor *self)
+bool base_is_heartbeat_rising_rapidly(monitor *self)
 {
     /*
      * Check if the heartbeat is rising rapidly according
@@ -156,11 +158,11 @@ void base_is_heartbeat_rising_rapidly(monitor *self)
     /*
      * Check if the rate is rapidly rising
      */
-    return (average >= RAPID_RISE);  
+    return (rate >= RAPID_RISE);  
 }
    
 
-void base_is_heartbeat_falling_rapidly(monitor *self)
+bool base_is_heartbeat_falling_rapidly(monitor *self)
 {
     /*
      * Check if the heartbeat is falling rapidly according
@@ -177,7 +179,7 @@ void base_is_heartbeat_falling_rapidly(monitor *self)
     /*
      * Check if the rate is rapidly falling 
      */
-    return (average >= RAPID_FALL);  
+    return (rate >= RAPID_FALL);  
 } 
 
 
@@ -202,7 +204,7 @@ void base_set_detection_status(monitor *self)
     /*
      * Set the detection status for @self 
      */ 
-    self->detection_status = local_status;
+    self->status = local_status;
 
 
     return;
@@ -257,20 +259,20 @@ monitor *bootstrap_monitor(
     /*
      * Allocate a new monitor
      */ 
-    the_monitor = calloc(1, sizeof(monitor));
+    monitor *new_monitor = calloc(1, sizeof(monitor));
     assert(!!new_monitor && "bootstrap_monitor: malloc failed");
 
 
     /*
      * Set "new_monitor"->monitor_handler_setup
      */ 
-    the_monitor->monitor_handler_setup = setup_func;
+    new_monitor->monitor_handler_setup = setup_func;
 
 
     /*
      * Set up the monitor properly using @setup_func
      */
-    the_monitor->monitor_handler_setup(the_monitor);
+    new_monitor->monitor_handler_setup(new_monitor);
 
 
     /*
@@ -281,17 +283,17 @@ monitor *bootstrap_monitor(
     app_timer_create(
 	timer, 
 	APP_TIMER_MODE_REPEATED,
-	the_monitor->heartbeat_timer_handler
+	new_monitor->heartbeat_timer_handler
     );
 
     app_timer_start(
-	timer,
+	*timer,
 	32768, /* 1 second */
 	NULL
     );
 
 
-    return;
+    return new_monitor;
 }
 
 

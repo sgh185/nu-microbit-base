@@ -18,10 +18,12 @@
 #include "app_timer.h"
 #include "microbit_v2.h"
 
-#define SIMULATOR 1
-#define SENSOR 0
+#define MONITOR_TYPES 2
+#define SIMULATOR 0
+#define SENSOR 1
+#define SETUP_NO SIMULATOR
 
-#define AI __attribute__((always_inline))
+#define AI __attribute__((always_inline)) inline
 
 #define DEBUG_ON 1
-#define DEBUG if (DEBUG_ON) printf
+#define DEBUG_PRINT if (DEBUG_ON) printf

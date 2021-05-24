@@ -7,6 +7,7 @@
 #pragma once
 
 #include "system_headers.h"
+#include "ring_buffer.h"
 
 
 /*
@@ -18,15 +19,15 @@
 #define RAPID_FALL -16.0F
 #define RECENT 5
 
-enum monitoring_mode {
+typedef enum {
     
     SHORT_TERM=0,
     LONG_TERM,
     DETECT
 
-};
+} monitoring_mode ;
 
-enum detection_status {
+typedef enum {
 
     NORMAL=0,
     RATE_HIGH,
@@ -34,7 +35,7 @@ enum detection_status {
     RISING_RAPIDLY,
     FALLING_RAPIDLY
     
-} ;
+} detection_status ;
 
 
 typedef struct monitor {
@@ -52,32 +53,32 @@ typedef struct monitor {
     /*
      * Analysis methods
      */
-    bool (*is_heartbeat_high)(monitor *self) ; 
+    bool (*is_heartbeat_high)(struct monitor *self) ; 
     
-    bool (*is_heartbeat_low)(monitor *self) ; 
+    bool (*is_heartbeat_low)(struct monitor *self) ; 
     
-    bool (*is_heartbeat_rising_rapidly)(monitor *self) ; 
+    bool (*is_heartbeat_rising_rapidly)(struct monitor *self) ; 
     
-    bool (*is_heartbeat_falling_rapidly)(monitor *self) ; 
+    bool (*is_heartbeat_falling_rapidly)(struct monitor *self) ; 
 
-    void (*set_detection_status)(monitor *self) ;
+    void (*set_detection_status)(struct monitor *self) ;
 
 
     /*
      * Functionality methods
      */ 
-    void (*get_new_heartbeat)(monitor *self) ;
+    void (*get_new_heartbeat)(struct monitor *self) ;
 
     void (*change_monitoring_mode)(
-	monitor *self, 
+	struct monitor *self, 
 	monitoring_mode new_mode
     ) ;
 
-    void (*print_heartbeat_history)(monitor *self) ;
+    void (*print_heartbeat_history)(struct monitor *self) ;
 
-    void (*monitor_handler_setup)(monitor *self) ;
+    void (*monitor_handler_setup)(struct monitor *self) ;
     
-    void (*monitor_handler_cleanup)(monitor *self) ;
+    void (*monitor_handler_cleanup)(struct monitor *self) ;
 
     void (*heartbeat_timer_handler)(void *state) ;
 
@@ -125,7 +126,10 @@ void base_change_monitoring_mode (
 
 void base_print_heartbeat_history(monitor *self) ;
 
-monitor *bootstrap_monitor(void (*setup_func)(monitor *)) ;
+monitor *bootstrap_monitor(
+    void (*setup_func)(monitor *),
+    app_timer_id_t const *timer
+) ;
 
 
 /*

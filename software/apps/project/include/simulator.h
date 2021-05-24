@@ -13,33 +13,36 @@
 /*
  * Definitions, types
  */ 
+struct simulator;
+
+
 #define MAX_HEARTBEAT_LINEAR_CHANGE 30
 #define MAX_HEARTBEAT 210
 #define MIN_HEARTBEAT 40
 #define MAX_SIMULATION_INTERVAL 10
 
 #define NUM_SIGNS 2
-enum sign {
+typedef enum {
 
     POS=0,
     NEG=1
 
-};
+} sign ;
 
 
 #define NUM_EXPANSION_MODES 4
-enum expansion_mode {
+typedef enum {
 
     NONE=0,
     LINEAR,
     QUADRATIC,
     EXPONENTIAL
 
-};
+} expansion_mode  ;
 
-typedef expander uint8_t (*heartbeat_expander_t)(simulator *);
+typedef uint8_t (*expander)(struct simulator *);
 
-typedef struct {
+typedef struct simulator {
 
     /*
      * Fields, NOTE --- Don't care about struct layout
@@ -62,7 +65,7 @@ typedef struct {
 /*
  * Global simulator object
  */ 
-extern simulator *sim ;
+extern simulator *the_sim ;
 
 
 /*
@@ -89,13 +92,13 @@ void simulate_new_heartbeat(simulator *sim) ;
 
 void switch_simulation_settings(simulator *sim);
 
-uint8_t simulate_exponential_expansion(simulator *self);
+uint8_t simulate_exponential_expansion(struct simulator *self);
 
-uint8_t simulate_quadratic_expansion(simulator *self);
+uint8_t simulate_quadratic_expansion(struct simulator *self);
 
-uint8_t simulate_linear_expansion(simulator *self);
+uint8_t simulate_linear_expansion(struct simulator *self);
 
-uint8_t simulate_no_expansion(simulator *self);
+uint8_t simulate_no_expansion(struct simulator *self);
 
 
 /*

@@ -10,8 +10,8 @@
  * ---------- Calculation Utilities ----------
  */ 
 AI uint32_t __sum (
-    uint8_t *values,
-    uint8_t num_values
+    uint32_t *values,
+    uint32_t num_values
 )
 {
     /*
@@ -20,16 +20,16 @@ AI uint32_t __sum (
      * Sum @values up for @num_values entries
      */ 
     uint32_t sum = 0;
-    for (uint8_t i = 0 ; i < num_values ; i++)
-	sum += ((uint32_t) values[i]);
+    for (uint32_t i = 0 ; i < num_values ; i++)
+	sum += values[i];
 
     return sum;
 }
 
 
 AI float __average (
-    uint8_t *values,
-    uint8_t num_values
+    uint32_t *values,
+    uint32_t num_values
 ) 
 {
     /*
@@ -44,9 +44,9 @@ AI float __average (
 
 
 AI float __lsr_slope (
-    uint8_t *x_values,
-    uint8_t *y_values,
-    uint8_t N 
+    uint32_t *x_values,
+    uint32_t *y_values,
+    uint32_t N 
 )
 {
     /*
@@ -67,27 +67,27 @@ AI float __lsr_slope (
      * Compute Σ(x^2) 
      */
     uint32_t x_sq_values[N];
-    for (uint8_t i = 0 ; i < N ; i++)
+    for (uint32_t i = 0 ; i < N ; i++)
     {
-	uint32_t x = (uint32_t) x_values[i];
+	uint32_t x = x_values[i];
 	x_sq_values[i] = x * x;
     }
 
-    uint32_t sum_x_sq = __sum(&x_sq_values, N); 
+    uint32_t sum_x_sq = __sum((uint32_t *) &x_sq_values, N); 
 
 
     /*
      * Compute Σ(xy) 
      */
     uint32_t xy_values[N];
-    for (uint8_t i = 0 ; i < N ; i++)
+    for (uint32_t i = 0 ; i < N ; i++)
     {
-	uint32_t x = (uint32_t) x_values[i];
-	uint32_t y = (uint32_t) y_values[i];
+	uint32_t x = x_values[i];
+	uint32_t y = y_values[i];
 	xy_values[i] = x * y;
     }
 
-    uint32_t sum_xy = __sum(&xy_values, N); 
+    uint32_t sum_xy = __sum((uint32_t *) &xy_values, N); 
 
 
     /*

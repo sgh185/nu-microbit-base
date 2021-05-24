@@ -49,7 +49,7 @@ typedef struct {
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI void _incr_rb_next(ring_buffer rb) ;
+extern void _incr_rb_next(ring_buffer rb) ;
 
 
 /*
@@ -63,7 +63,7 @@ AI void _incr_rb_next(ring_buffer rb) ;
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI bool rb_has_wrapped(ring_buffer rb) ;
+extern bool rb_has_wrapped(ring_buffer rb) ;
 
 
 /*
@@ -80,7 +80,7 @@ AI bool rb_has_wrapped(ring_buffer rb) ;
  * - Ring buffer to work with
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI uint8_t rb_get (
+extern uint8_t rb_get (
     uint8_t idx,
     ring_buffer rb
 ) ;
@@ -99,7 +99,7 @@ AI uint8_t rb_get (
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI void rb_push (
+extern void rb_push (
     uint8_t val,
     ring_buffer rb
 ) ;
@@ -119,7 +119,7 @@ AI void rb_push (
  * - Ring buffer to look in
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI uint8_t rb_find_once (
+extern uint8_t rb_find_once (
     uint8_t val,
     ring_buffer rb
 ) ;
@@ -148,7 +148,7 @@ AI uint8_t rb_find_once (
  * - Variable to set with number of indices found
  * - typeof(@num_occ) = uint8_t * (ptr to variable) 
  */ 
-AI void rb_find_all (
+extern void rb_find_all (
     uint8_t val,
     ring_buffer rb,
     uint8_t *arr,
@@ -180,11 +180,11 @@ AI void rb_find_all (
  * - Variable to set with latest entries fetched 
  * - typeof(@num_fetched) = uint8_t * (ptr to variable) 
  */ 
-AI void rb_get_last_n_entries (
+extern void rb_get_last_n_entries (
     ring_buffer rb,
     uint8_t *arr,
     uint8_t N,
-    uint8_t num_fetched
+    uint8_t *num_fetched
 ) ;
 
 
@@ -201,7 +201,7 @@ AI void rb_get_last_n_entries (
  * - Ring buffer to look in
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-AI void rb_print (
+extern void rb_print (
     const char *prefix,
     ring_buffer rb
 ) ;

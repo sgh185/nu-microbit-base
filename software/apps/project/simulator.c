@@ -6,7 +6,7 @@
 
 #include "simulator.h"
 
-simulator *sim = NULL;
+simulator *the_sim = NULL;
 
 float a_terms[3] = { 0.05F, 0.10F, 0.15F } ;
 
@@ -38,7 +38,7 @@ static uint8_t _calculate_exponential_start_input(simulator *sim)
      *
      * No overflows back to uint8_t because of the math
      */ 
-    float y = ((float) @self->last_heartbeat_simulated) ;
+    float y = ((float) sim->last_heartbeat_simulated) ;
     float y_div_a = y / curr_a_term ;
     float x = log2f(y_div_a) ;
     return ((uint8_t) x);
@@ -60,7 +60,7 @@ static uint8_t _calculate_quadratic_start_input(simulator *sim)
      *
      * No overflows back to uint8_t because of the math
      */ 
-    float y = ((float) @self->last_heartbeat_simulated) ;
+    float y = ((float) sim->last_heartbeat_simulated) ;
     float y_div_a = y / curr_a_term ;
     float x = sqrtf(y_div_a) ;
     return ((uint8_t) x);
@@ -111,7 +111,7 @@ void switch_simulation_settings(simulator *sim)
      * Select sign
      */
     random = lrand48();
-    self->direction = random % NUM_SIGNS ; 
+    sim->direction = random % NUM_SIGNS ; 
 
 
     /*
@@ -119,15 +119,15 @@ void switch_simulation_settings(simulator *sim)
      */ 
     random = lrand48();
     expansion_mode mode = (random % NUM_EXPANSION_MODES);
-    self->heartbeat_expander = expanders[mode] ;
+    sim->heartbeat_expander = expanders[mode] ;
 
 
     /*
      * Select number of seconds to simulate
      */ 
     random = lrand48();
-    self->num_seconds_to_simulate_curr_settings = random % MAX_SIMULATION_INTERVAL;
-    self->num_seconds_simulated = 0;
+    sim->num_seconds_to_simulate_curr_settings = random % MAX_SIMULATION_INTERVAL;
+    sim->num_seconds_simulated = 0;
 
 
     /*
@@ -138,22 +138,22 @@ void switch_simulation_settings(simulator *sim)
 	|| (mode == NONE)
 	|| (mode == LINEAR))
     {
-	self->heartbeat_change_val = random % MAX_HEARTBEAT_LINEAR_CHANGE; 
+	sim->heartbeat_change_val = random % MAX_HEARTBEAT_LINEAR_CHANGE; 
     }
     else if (mode == QUADRATIC)
     {
 	curr_a_term = a_terms[(random % NUM_A_TERMS)] ;	
-	self->heartbeat_change_val = _calculate_quadratic_start_input(self);
+	sim->heartbeat_change_val = _calculate_quadratic_start_input(sim);
     }
     else if (mode == EXPONENTIAL)
     {
 	curr_a_term = a_terms[(random % NUM_A_TERMS)] ;	
-	self->heartbeat_change_val = _calculate_exponential_start_input(self);
+	sim->heartbeat_change_val = _calculate_exponential_start_input(sim);
     }
 }
 
 
-uint8_t simulate_exponential_expansion(simulator *self);
+uint8_t simulate_exponential_expansion(struct simulator *self)
 {
     /*
      * TOP
@@ -214,7 +214,7 @@ uint8_t simulate_exponential_expansion(simulator *self);
 }
 
 
-uint8_t simulate_quadratic_expansion(simulator *self);
+uint8_t simulate_quadratic_expansion(struct simulator *self)
 {
     /*
      * TOP
@@ -276,7 +276,7 @@ uint8_t simulate_quadratic_expansion(simulator *self);
 }
 
 
-uint8_t simulate_linear_expansion(simulator *self);
+uint8_t simulate_linear_expansion(struct simulator *self)
 {
     /*
      * TOP
@@ -312,7 +312,7 @@ uint8_t simulate_linear_expansion(simulator *self);
 }
 
 
-uint8_t simulate_no_expansion(simulator *self) 
+uint8_t simulate_no_expansion(struct simulator *self) 
 {
     /*
      * Simply fetch @self->last_heartbeat_simulated
@@ -356,16 +356,16 @@ void simulator_monitor_handler_setup(monitor *self)
     /*
      * Allocate global simulator object
      */ 
-    sim = calloc(1, sizeof(simulator));
-    assert(!!sim && "simulator_monitor_handler_setup: malloc failed");
+    the_sim = calloc(1, sizeof(simulator));
+    assert(!!the_sim && "simulator_monitor_handler_setup: malloc failed");
 
 
     /*
      * Set the last simulated heartbeat to 60 bpm, and
      * randomly select all other settings
      */ 
-    sim->last_heartbeat_simulated = 60;
-    switch_simulation_settings(sim);
+    the_sim->last_heartbeat_simulated = 60;
+    switch_simulation_settings(the_sim);
 
 
     return;
@@ -377,8 +377,8 @@ void simulator_monitor_handler_cleanup(monitor *self)
     /*
      * Deallocate all memory
      */ 
-    free(sim);
-    free(monitor);
+    free(the_sim);
+    free(self);
     return;
 }
 
@@ -396,14 +396,14 @@ void simulator_get_new_heartbeat(monitor *self)
      * Simulate a new heartbeat using the global 
      * simulator object, "sim" 
      */ 
-    simulate_new_heartbeat(sim);
+    simulate_new_heartbeat(the_sim);
 
 
     /*
      * Update @self->heartbeat_history
      */
     rb_push(
-	sim->last_heartbeat_simulated,
+	the_sim->last_heartbeat_simulated,
 	self->heartbeat_history
     );
 }
@@ -436,9 +436,9 @@ void simulator_heartbeat_timer_handler(void *state)
     /*
      * <Step 3.>
      */ 
-    sim->num_seconds_simulated += 1;
-    if (sim->num_seconds_simulated == sim->num_seconds_to_simulate_curr_settings)
-	switch_simulation_settings(sim);
+    the_sim->num_seconds_simulated += 1;
+    if (the_sim->num_seconds_simulated >= the_sim->num_seconds_to_simulate_curr_settings)
+	switch_simulation_settings(the_sim);
 
 
     return; 

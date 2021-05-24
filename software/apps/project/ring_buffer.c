@@ -9,7 +9,7 @@
 #include "ring_buffer.h"
 
 #define modulo_incr(val, base) ((val + 1) % base)
-#define module_decr(val, base) ((val + base - 1) % base)
+#define modulo_decr(val, base) ((val + base - 1) % base)
 
 AI void _incr_rb_next(ring_buffer rb)
 {
@@ -141,7 +141,7 @@ AI void rb_get_last_n_entries (
     {
 	arr[local_num_fetched] = rb_get(idx, rb);
 	local_num_fetched++;
-	modulo_decr(idx, DEFAULT_RING_BUF_SIZE);
+	idx = modulo_decr(idx, DEFAULT_RING_BUF_SIZE);
 	if (true
 	    && !rb.wrapped
 	    && idx == 0) break;
