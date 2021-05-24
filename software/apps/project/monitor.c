@@ -241,23 +241,23 @@ void base_print_heartbeat_history(monitor *self)
 /*
  * ---------- Base Stubs ----------
  */ 
-void base_sensor_handler_setup(monitor *self)
+void base_monitor_handler_setup(monitor *self)
 {
-    assert(false && "base_sensor_handler_setup should not be used!");
+    assert(false && "base_monitor_handler_setup should not be used!");
     return;
 }
 
 
-void base_sensor_handler_cleanup(monitor *self) 
+void base_monitor_handler_cleanup(monitor *self) 
 {
-    assert(false && "base_sensor_handler_cleanup should not be used!");
+    assert(false && "base_monitor_handler_cleanup should not be used!");
     return;
 }
 
 
 void base_heartbeat_timer_handler(void *state)
 {
-    assert(false && "base_sensor_handler_cleanup should not be used!");
+    assert(false && "base_heartbeat_timer_handler should not be used!");
     return;
 }
 

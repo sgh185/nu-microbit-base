@@ -73,9 +73,9 @@ typedef struct monitor {
 
     void (*print_heartbeat_history)(monitor *self) ;
 
-    void (*sensor_handler_setup)(monitor *self) ;
+    void (*monitor_handler_setup)(monitor *self) ;
     
-    void (*sensor_handler_cleanup)(monitor *self) ;
+    void (*monitor_handler_cleanup)(monitor *self) ;
 
     void (*heartbeat_timer_handler)(void *state) ;
 
@@ -125,9 +125,9 @@ void base_print_heartbeat_history(monitor *self) ;
  * modules end up implementing a full monitor must
  * implement these methods fully
  */ 
-void base_sensor_handler_setup(monitor *self) ;
+void base_monitor_handler_setup(monitor *self) ;
 
-void base_sensor_handler_cleanup(monitor *self) ;
+void base_monitor_handler_cleanup(monitor *self) ;
 
 void base_heartbeat_timer_handler(void *state) ;
 
