@@ -66,6 +66,8 @@ typedef struct monitor {
     /*
      * Functionality methods
      */ 
+    void (*get_new_heartbeat)(monitor *self) ;
+
     void (*change_monitoring_mode)(
 	monitor *self, 
 	monitoring_mode new_mode
@@ -139,6 +141,7 @@ void base_monitor_handler_cleanup(monitor *self) ;
 
 void base_heartbeat_timer_handler(void *state) ;
 
+void base_get_new_heartbeat(monitor *self) ;
 
 
 

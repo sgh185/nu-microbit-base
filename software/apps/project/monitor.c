@@ -257,7 +257,7 @@ monitor *bootstrap_monitor(
     /*
      * Allocate a new monitor
      */ 
-    the_monitor = malloc(sizeof(monitor));
+    the_monitor = calloc(1, sizeof(monitor));
     assert(!!new_monitor && "bootstrap_monitor: malloc failed");
 
 
@@ -320,6 +320,11 @@ void base_heartbeat_timer_handler(void *state)
 }
 
 
+void base_get_new_heartbeat(monitor *self)
+{
+    assert(false && "base_get_new_heartbeat: should not be used!");
+    return;
+}
 
 
 
