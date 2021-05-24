@@ -111,7 +111,7 @@ void switch_simulation_settings(simulator *sim)
      * Select sign
      */
     random = lrand48();
-    @self->direction = random % NUM_SIGNS ; 
+    self->direction = random % NUM_SIGNS ; 
 
 
     /*
@@ -119,14 +119,15 @@ void switch_simulation_settings(simulator *sim)
      */ 
     random = lrand48();
     expansion_mode mode = (random % NUM_EXPANSION_MODES);
-    @self->heartbeat_expander = expanders[mode] ;
+    self->heartbeat_expander = expanders[mode] ;
 
 
     /*
      * Select number of seconds to simulate
      */ 
     random = lrand48();
-    @self->num_seconds_to_simulate_curr_settings = random % MAX_SIMULATION_INTERVAL;
+    self->num_seconds_to_simulate_curr_settings = random % MAX_SIMULATION_INTERVAL;
+    self->num_seconds_simulated = 0;
 
 
     /*
@@ -137,17 +138,17 @@ void switch_simulation_settings(simulator *sim)
 	|| (mode == NONE)
 	|| (mode == LINEAR))
     {
-	@self->heartbeat_change_val = random % MAX_HEARTBEAT_LINEAR_CHANGE; 
+	self->heartbeat_change_val = random % MAX_HEARTBEAT_LINEAR_CHANGE; 
     }
     else if (mode == QUADRATIC)
     {
 	curr_a_term = a_terms[(random % NUM_A_TERMS)] ;	
-	@self->heartbeat_change_val = _calculate_quadratic_start_input(self);
+	self->heartbeat_change_val = _calculate_quadratic_start_input(self);
     }
     else if (mode == EXPONENTIAL)
     {
 	curr_a_term = a_terms[(random % NUM_A_TERMS)] ;	
-	@self->heartbeat_change_val = _calculate_exponential_start_input(self);
+	self->heartbeat_change_val = _calculate_exponential_start_input(self);
     }
 }
 
@@ -406,4 +407,41 @@ void simulator_get_new_heartbeat(monitor *self)
 	self->heartbeat_history
     );
 }
+
+
+void simulator_heartbeat_timer_handler(void *state)
+{
+    /*
+     * TOP
+     *
+     * We're at a 1-second interval. Follow these steps:
+     * 1) Fetch the new heartbeat, add to history
+     * 2) Calculate the detection status based on the 
+     *    new history available  
+     * 3) Update the simulation settings, if necessary 
+     */ 
+    
+    /*
+     * <Step 1.>
+     */ 
+    the_monitor->get_new_heartbeat(the_monitor);
+
+
+    /*
+     * <Step 2.>
+     */  
+    the_monitor->set_detection_status(the_monitor);
+
+
+    /*
+     * <Step 3.>
+     */ 
+    sim->num_seconds_simulated += 1;
+    if (sim->num_seconds_simulated == sim->num_seconds_to_simulate_curr_settings)
+	switch_simulation_settings(sim);
+
+
+    return; 
+}
+
 

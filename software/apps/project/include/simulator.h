@@ -110,4 +110,5 @@ void simulator_monitor_handler_cleanup(monitor *self) ;
 
 void simulator_get_new_heartbeat(monitor *self) ;
 
+void simulator_heartbeat_timer_handler(void *state) ;
 
