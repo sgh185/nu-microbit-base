@@ -241,22 +241,6 @@ void base_print_heartbeat_history(monitor *self)
 }
 
 
-void base_heartbeat_timer_handler(void *state)
-{
-    /*
-     * TOP
-     *
-     * We're at a 1-second interval. Follow these steps:
-     * 1) Fetch the new heartbeat, add to history
-     * 2) Calculate the detection status based on the 
-     *    new history available  
-     */ 
-    the_monitor->get_new_heartbeat(the_monitor);
-    the_monitor->set_detection_status(the_monitor);
-    return;
-}
-    
-    
 monitor *bootstrap_monitor(
     void (*setup_func)(monitor *),
     app_timer_id_t const *timer
@@ -336,5 +320,10 @@ void base_get_new_heartbeat(monitor *self)
 }
 
 
+void base_heartbeat_timer_handler(void *state)
+{
+    assert(false && "base_heartbeat_timer_handler: should not be used!");
+    return;
+}
 
 
