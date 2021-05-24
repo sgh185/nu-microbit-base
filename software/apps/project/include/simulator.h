@@ -58,6 +58,12 @@ typedef struct {
 
 
 /*
+ * Global simulator object
+ */ 
+extern simulator *sim ;
+
+
+/*
  * Global array of expander methods
  */ 
 extern expander expanders[NUM_EXPANSION_MODES] ;
@@ -94,9 +100,9 @@ uint8_t simulate_no_expansion(simulator *self);
  * NOTE --- These methods are needed to extend the monitor
  * and implement a fully-functioning version 
  */ 
-void simulator_sensor_handler_setup(monitor *self) ;
+void simulator_monitor_handler_setup(monitor *self) ;
 
-void simulator_sensor_handler_cleanup(monitor *self) ;
+void simulator_monitor_handler_cleanup(monitor *self) ;
 
 void simulator_heartbeat_timer_handler(void *state) ;
 

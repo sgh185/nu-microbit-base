@@ -6,6 +6,7 @@
 
 #include "simulator.h"
 
+simulator *sim = NULL;
 
 float a_terms[3] = { 0.05F, 0.10F, 0.15F } ;
 
@@ -292,4 +293,67 @@ uint8_t simulate_no_expansion(simulator *self)
     return self->last_heartbeat_simulated ; 
 }
 
+
+/*
+ * ---------- Simulator-Specific Monitor Functionality Methods ----------
+ */ 
+void simulator_monitor_handler_setup(monitor *self)
+{
+    /*
+     * Set up @self's modes 
+     */ 
+    self->mode = SHORT_TERM;
+    self->status = NORMAL;
+
+
+    /*
+     * Set analysis methods
+     */ 
+    self->is_heartbeat_high = base_is_heartbeat_high;
+    self->is_heartbeat_low = base_is_heartbeat_low;
+    self->is_heartbeat_rising_rapidly = base_is_heartbeat_rising_rapidly;
+    self->is_heartbeat_falling_rapidly = base_is_heartbeat_falling_rapidly;
+    self->set_detection_status = base_set_detection_status;
+	
+
+    /*
+     * Set functionality methods
+     */ 
+    self->change_monitoring_mode = base_change_monitoring_mode; 
+    self->print_heartbeat_history = base_print_heartbeat_history;
+    self->monitor_handler_cleanup = simulator_monitor_handler_cleanup; 
+    self->heartbeat_timer_handler = simulator_heartbeat_timer_handler;
+
+
+    /*
+     * Allocate global simulator object
+     */ 
+    sim = malloc(sizeof(simulator));
+    assert(!!sim && "simulator_monitor_handler_setup: malloc failed");
+
+
+    /*
+     * Set the last simulated heartbeat to 60 bpm, and
+     * randomly select all other settings
+     */ 
+    sim->last_heartbeat_simulated = 60;
+    switch_simulation_settings(sim);
+
+
+    return;
+}
+
+
+void simulator_monitor_handler_cleanup(monitor *self)
+{
+    /*
+     * Deallocate all memory
+     */ 
+    free(sim);
+    free(monitor);
+    return;
+}
+
+
+void simulator_heartbeat_timer_handler(void *state) ;
 
