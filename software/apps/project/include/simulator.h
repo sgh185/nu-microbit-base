@@ -13,10 +13,10 @@
 /*
  * Definitions, types
  */ 
-#define RAPID_HEARTBEAT_CHANGE 20
-#define HIGH_HEARTBEAT 210
-#define LOW_HEARTBEAT 30
-
+#define MAX_HEARTBEAT_CHANGE 30
+#define MIN_HEARTBEAT_CHANGE 0
+#define MAX_HEARTBEAT 210
+#define MIN_HEARTBEAT 40
 
 enum sign {
 
@@ -29,19 +29,30 @@ enum sign {
 typedef struct {
 
     /*
-     * Fields
+     * Fields, NOTE --- Don't care about struct layout
      */ 
     detection_mode mode_to_simulate ;
 
     uint8_t num_seconds_to_simulate_mode ;
 
+    uint8_t last_heartbeat_simulated ;
+
     uint8_t heartbeat_change_val ; /* Value to change the heartbeat by */
 
-    sign heartbeat_change_direction ; /* Heartbeat decreasing or increasing */
+    sign direction ; /* Heartbeat decreasing or increasing */
 
-    uint8_t (*heartbeat_change_modifier)(uint8_t curr_heartbeat_change_val) /* Optional modifier of .heartbeat_change_val over simulation */
+    uint8_t (*heartbeat_change_modifier)(simulator *self) /* Modifier of .heartbeat_change_val over simulation */
 
 } simulator ;
+
+
+/*
+ * For simulating exponential and quadratic expansions
+ */ 
+extern float a_terms[3] ;
+
+extern float curr_a_tem ;
+
 
 
 /*
@@ -53,11 +64,14 @@ uint8_t select_random_seconds_to_simulate(void);
 
 void switch_simulation_settings(simulator *sim);
 
-uint8_t simulate_exponential_backoff(uint8_t val);
+uint8_t simulate_exponential_expansion(simulator *self);
 
-uint8_t simulate_quadratic_backoff(uint8_t val);
+uint8_t simulate_quadratic_expansion(simulator *self);
 
-uint8_t simulate_linear_backoff(uint8_t val);
+uint8_t simulate_linear_expansion(simulator *self);
+
+uint8_t simulate_no_expansion(simulator *self);
+
 
 
 /*
