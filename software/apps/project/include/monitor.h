@@ -125,6 +125,8 @@ void base_change_monitoring_mode (
 
 void base_print_heartbeat_history(monitor *self) ;
 
+void base_heartbeat_timer_handler(void *state) ;
+
 monitor *bootstrap_monitor(void (*setup_func)(monitor *)) ;
 
 
@@ -138,8 +140,6 @@ monitor *bootstrap_monitor(void (*setup_func)(monitor *)) ;
 void base_monitor_handler_setup(monitor *self) ;
 
 void base_monitor_handler_cleanup(monitor *self) ;
-
-void base_heartbeat_timer_handler(void *state) ;
 
 void base_get_new_heartbeat(monitor *self) ;
 
