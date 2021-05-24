@@ -241,7 +241,10 @@ void base_print_heartbeat_history(monitor *self)
 }
 
 
-monitor *bootstrap_monitor(void (*setup_func)(monitor *))
+monitor *bootstrap_monitor(
+    void (*setup_func)(monitor *),
+    app_timer_id_t const *timer
+)
 {
     /*
      * TOP
@@ -254,20 +257,38 @@ monitor *bootstrap_monitor(void (*setup_func)(monitor *))
     /*
      * Allocate a new monitor
      */ 
-    monitor *new_monitor = malloc(sizeof(monitor));
+    the_monitor = malloc(sizeof(monitor));
     assert(!!new_monitor && "bootstrap_monitor: malloc failed");
 
 
     /*
      * Set "new_monitor"->monitor_handler_setup
      */ 
-    new_monitor->monitor_handler_setup = setup_func;
+    the_monitor->monitor_handler_setup = setup_func;
 
 
     /*
      * Set up the monitor properly using @setup_func
      */
-    new_monitor->monitor_handler_setup(new_monitor);
+    the_monitor->monitor_handler_setup(the_monitor);
+
+
+    /*
+     * Set up timer functionality
+     */ 
+    app_timer_init();
+
+    app_timer_create(
+	timer, 
+	APP_TIMER_MODE_REPEATED,
+	the_monitor->heartbeat_timer_handler
+    );
+
+    app_timer_start(
+	timer,
+	32768, /* 1 second */
+	NULL
+    );
 
 
     return;
