@@ -84,6 +84,12 @@ typedef struct monitor {
 
 
 /*
+ * Global monitor object
+ */ 
+extern monitor *the_monitor ;
+
+
+/*
  * ----------- Base Analysis Methods ----------
  *
  * NOTE --- The following methods implemented here are 

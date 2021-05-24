@@ -7,6 +7,9 @@
 #include "utils.h"
 
 
+monitor *the_monitor = NULL ;
+
+
 /*
  * ----------- Base Analysis Methods ----------
  */ 
