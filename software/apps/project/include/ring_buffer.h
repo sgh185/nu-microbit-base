@@ -49,7 +49,7 @@ typedef struct {
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-extern void _incr_rb_next(ring_buffer rb) ;
+extern void _incr_rb_next(ring_buffer *rb) ;
 
 
 /*
@@ -63,7 +63,7 @@ extern void _incr_rb_next(ring_buffer rb) ;
  * - Ring buffer to push to
  * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
  */ 
-extern bool rb_has_wrapped(ring_buffer rb) ;
+extern bool rb_has_wrapped(ring_buffer *rb) ;
 
 
 /*
@@ -82,7 +82,7 @@ extern bool rb_has_wrapped(ring_buffer rb) ;
  */ 
 extern uint8_t rb_get (
     uint8_t idx,
-    ring_buffer rb
+    ring_buffer *rb
 ) ;
 
 
@@ -101,7 +101,7 @@ extern uint8_t rb_get (
  */ 
 extern void rb_push (
     uint8_t val,
-    ring_buffer rb
+    ring_buffer *rb
 ) ;
 
 
@@ -121,7 +121,7 @@ extern void rb_push (
  */ 
 extern uint8_t rb_find_once (
     uint8_t val,
-    ring_buffer rb
+    ring_buffer *rb
 ) ;
 
 
@@ -150,7 +150,7 @@ extern uint8_t rb_find_once (
  */ 
 extern void rb_find_all (
     uint8_t val,
-    ring_buffer rb,
+    ring_buffer *rb,
     uint8_t *arr,
     uint8_t *num_occ
 ) ;
@@ -181,7 +181,7 @@ extern void rb_find_all (
  * - typeof(@num_fetched) = uint8_t * (ptr to variable) 
  */ 
 extern void rb_get_last_n_entries (
-    ring_buffer rb,
+    ring_buffer *rb,
     uint8_t *arr,
     uint8_t N,
     uint8_t *num_fetched
@@ -203,6 +203,6 @@ extern void rb_get_last_n_entries (
  */ 
 extern void rb_print (
     const char *prefix,
-    ring_buffer rb
+    ring_buffer *rb
 ) ;
 
