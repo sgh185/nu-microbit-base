@@ -82,6 +82,8 @@ typedef struct monitor {
 
     void (*heartbeat_timer_handler)(void *state) ;
 
+    void (*monitor_handler_dump_state)(struct monitor *self) ;
+
 
 } monitor ;
 
@@ -147,6 +149,7 @@ void base_get_new_heartbeat(monitor *self) ;
 
 void base_heartbeat_timer_handler(void *state) ;
 
+void base_monitor_handler_dump_state(monitor *self) ;
 
 
 

@@ -12,6 +12,8 @@ monitor *the_monitor = NULL ;
 
 /*
  * ----------- Base Analysis Methods ----------
+ *
+ * NOTE --- There is suspicious casting. Ignore
  */ 
 static uint8_t _average_recent_heartbeat_history(monitor *self)
 {
@@ -29,7 +31,7 @@ static uint8_t _average_recent_heartbeat_history(monitor *self)
     uint8_t num_recent_entries = RECENT;
     uint8_t num_recent_entries_received = 0;
     rb_get_last_n_entries(
-	self->heartbeat_history,
+	&(self->heartbeat_history),
 	(uint8_t *) &entries_to_receive,
 	num_recent_entries,
 	(uint8_t *) &num_recent_entries_received	
@@ -40,9 +42,9 @@ static uint8_t _average_recent_heartbeat_history(monitor *self)
      * Calculate an average over the history 
      */ 
     uint8_t average = 
-	(uint8_t) __average(
-	    (uint32_t *) &entries_to_receive, 
-	    (uint32_t) num_recent_entries_received
+	(uint8_t) __average_bytes(
+	    (uint8_t *) &entries_to_receive, 
+	    num_recent_entries_received
 	);
 
 
@@ -66,7 +68,7 @@ static float _rate_recent_heartbeat_history(monitor *self)
     uint8_t num_recent_entries = RECENT;
     uint8_t num_recent_entries_received = 0;
     rb_get_last_n_entries(
-	self->heartbeat_history,
+	&(self->heartbeat_history),
 	(uint8_t *) &entries_to_receive,
 	num_recent_entries,
 	(uint8_t *) &num_recent_entries_received	
@@ -74,20 +76,20 @@ static float _rate_recent_heartbeat_history(monitor *self)
 
 
     /*
-     * Build the y-values for the rate calculation
+     * Build the x-values for the rate calculation
      */
-    uint8_t y_values[num_recent_entries_received];
-    for (uint8_t i = 0 ; i < num_recent_entries_received ; i++) y_values[i] = i;
+    uint8_t x_values[num_recent_entries_received];
+    for (uint8_t i = 0 ; i < num_recent_entries_received ; i++) x_values[i] = i;
 
     
     /*
      * Calculate rate of change of the history 
      */ 
     float rate = 
-	__lsr_slope(
-	    (uint32_t *) &entries_to_receive, 
-	    (uint32_t *) &y_values, 
-	    (uint32_t) num_recent_entries_received
+	__lsr_slope_bytes (
+	    (uint8_t *) &x_values, 
+	    (uint8_t *) &entries_to_receive, 
+	    num_recent_entries_received
 	);
 
 
@@ -109,6 +111,7 @@ bool base_is_heartbeat_high(monitor *self)
      * Calculate average of recent heartbeat history
      */ 
     uint8_t average = _average_recent_heartbeat_history(self);
+    DEBUG_PRINT("average: %u\n", average);
 
 
     /*
@@ -132,6 +135,7 @@ bool base_is_heartbeat_low(monitor *self)
      * Calculate average of recent heartbeat history
      */ 
     uint8_t average = _average_recent_heartbeat_history(self);
+    DEBUG_PRINT("average: %u\n", average);
 
 
     /*
@@ -153,6 +157,7 @@ bool base_is_heartbeat_rising_rapidly(monitor *self)
      * Calculate the rate of change of recent heartbeat history
      */ 
     float rate = _rate_recent_heartbeat_history(self);
+    DEBUG_PRINT("rate: %f\n", rate);
 
 
     /*
@@ -174,12 +179,13 @@ bool base_is_heartbeat_falling_rapidly(monitor *self)
      * Calculate the rate of change of recent heartbeat history
      */ 
     float rate = _rate_recent_heartbeat_history(self);
+    DEBUG_PRINT("rate: %f\n", rate);
 
 
     /*
      * Check if the rate is rapidly falling 
      */
-    return (rate >= RAPID_FALL);  
+    return (rate <= RAPID_FALL);  
 } 
 
 
@@ -235,7 +241,7 @@ void base_print_heartbeat_history(monitor *self)
      */
     rb_print(
 	"MONITOR",
-      	self->heartbeat_history
+      	&(self->heartbeat_history)
     );
 
 
@@ -297,7 +303,6 @@ monitor *bootstrap_monitor(
 }
 
 
-
 /*
  * ---------- Base Stubs ----------
  */ 
@@ -325,6 +330,13 @@ void base_get_new_heartbeat(monitor *self)
 void base_heartbeat_timer_handler(void *state)
 {
     assert(false && "base_heartbeat_timer_handler: should not be used!");
+    return;
+}
+
+
+void base_monitor_handler_dump_state(monitor *self)
+{
+    assert(false && "base_monitor_handler_dump_state: should not be used!");
     return;
 }
 
