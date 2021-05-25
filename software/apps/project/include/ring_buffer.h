@@ -87,6 +87,18 @@ extern uint8_t rb_get (
 
 
 /*
+ * rb_get_latest 
+ *
+ * Gets the latest value added to the ring buffer. 
+ * 
+ * @rb
+ * - Ring buffer to work with
+ * - typeof(@rb) = ring_buffer (NOT ring_buffer *) 
+ */ 
+extern uint8_t rb_get_latest (ring_buffer *rb) ;
+
+
+/*
  * rb_push
  *
  * Pushes a value to the ring buffer's next index to fill

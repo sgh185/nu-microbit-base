@@ -38,6 +38,14 @@ AI uint8_t rb_get (
 }
 
 
+AI uint8_t rb_get_latest (ring_buffer *rb)
+{
+    uint8_t next = rb->next_index_to_fill;
+    uint8_t idx = modulo_decr(next, DEFAULT_RING_BUF_SIZE);
+    return rb_get(idx, rb) ;
+}
+
+
 AI void rb_push (
     uint8_t val,
     ring_buffer *rb
@@ -175,7 +183,6 @@ AI void rb_print (
     /*
      * Iterate
      */ 
-    printf("%s ", prefix);
     do {
 	printf("%u ", rb_get(idx, rb));
 	idx = modulo_incr(idx, DEFAULT_RING_BUF_SIZE);	
