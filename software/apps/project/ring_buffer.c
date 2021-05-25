@@ -123,31 +123,33 @@ AI void rb_get_last_n_entries (
      */ 
     if (!(rb->wrapped) && (rb->next_index_to_fill == 0)) return;
 
-    printf("rb->next_index_to_fill: %u\n", rb->next_index_to_fill); 
+    uint8_t num_walk_back = 0;
+    uint8_t start = rb->next_index_to_fill;
+    while (num_walk_back < N)
+    {
+	start = modulo_decr(start, DEFAULT_RING_BUF_SIZE);
+	num_walk_back++;
+	if (true
+	    && !rb->wrapped
+	    && start == 0) break;
+    }
 
-    uint8_t idx = rb->next_index_to_fill;
-    uint8_t local_num_fetched = 0;
 
-    
     /*
      * Iterate
      */
-    while (local_num_fetched < N)
+    uint8_t idx = start;
+    for (uint8_t i = 0 ; i < num_walk_back ; i++)
     {
-	idx = modulo_decr(idx, DEFAULT_RING_BUF_SIZE);
-	arr[local_num_fetched] = rb_get(idx, rb);
-	local_num_fetched++;
-	if (true
-	    && !rb->wrapped
-	    && idx == 0) break;
-	printf("idx: %u\n", idx);
+	arr[i] = rb_get(idx, rb);
+	idx = modulo_incr(idx, DEFAULT_RING_BUF_SIZE);
     }
 
 
     /*
      * Set state
      */ 
-    *num_fetched = local_num_fetched;
+    *num_fetched = num_walk_back;
 
 
     return;
