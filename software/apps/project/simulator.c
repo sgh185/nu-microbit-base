@@ -13,10 +13,10 @@ float a_terms[3] = { 0.05F, 0.10F, 0.15F } ;
 float curr_a_term ;
 
 expander expanders[NUM_EXPANSION_MODES] = {
-    simulate_exponential_expansion,
-    simulate_quadratic_expansion, 
+    simulate_no_expansion, 
     simulate_linear_expansion,
-    simulate_no_expansion    
+    simulate_quadratic_expansion, 
+    simulate_exponential_expansion
 } ;
 
 
@@ -120,6 +120,7 @@ void switch_simulation_settings(simulator *sim)
     random = lrand48();
     expansion_mode mode = (random % NUM_EXPANSION_MODES);
     sim->heartbeat_expander = expanders[mode] ;
+    sim->mode = mode;
 
 
     /*
@@ -150,6 +151,9 @@ void switch_simulation_settings(simulator *sim)
 	curr_a_term = a_terms[(random % NUM_A_TERMS)] ;	
 	sim->heartbeat_change_val = _calculate_exponential_start_input(sim);
     }
+
+
+    return;
 }
 
 
@@ -301,7 +305,7 @@ uint8_t simulate_linear_expansion(struct simulator *self)
 	(change_pos) ?
 	(last + change) :
 	(last - change) ;
-	
+    
     uint8_t new_heartbeat = 
 	(change_pos) ?
 	(MIN(expansion, MAX_HEARTBEAT)) :
@@ -350,7 +354,8 @@ void simulator_monitor_handler_setup(monitor *self)
     self->change_monitoring_mode = base_change_monitoring_mode; 
     self->print_heartbeat_history = base_print_heartbeat_history;
     self->monitor_handler_cleanup = simulator_monitor_handler_cleanup; 
-    self->heartbeat_timer_handler = base_heartbeat_timer_handler;
+    self->heartbeat_timer_handler = simulator_heartbeat_timer_handler;
+    self->monitor_handler_dump_state = simulator_monitor_handler_dump_state;
 
 
     /*
@@ -361,11 +366,23 @@ void simulator_monitor_handler_setup(monitor *self)
 
 
     /*
+     * Seed the random number generator
+     */ 
+    srand48(SEED);
+
+
+    /*
      * Set the last simulated heartbeat to 60 bpm, and
      * randomly select all other settings
      */ 
     the_sim->last_heartbeat_simulated = 60;
     switch_simulation_settings(the_sim);
+
+
+    /*
+     * Debugging
+     */ 
+    if (DEBUG_ON) self->monitor_handler_dump_state(self);
 
 
     return;
@@ -404,8 +421,11 @@ void simulator_get_new_heartbeat(monitor *self)
      */
     rb_push(
 	the_sim->last_heartbeat_simulated,
-	self->heartbeat_history
+	&(self->heartbeat_history)
     );
+
+
+    return;
 }
 
 
@@ -440,8 +460,136 @@ void simulator_heartbeat_timer_handler(void *state)
     if (the_sim->num_seconds_simulated >= the_sim->num_seconds_to_simulate_curr_settings)
 	switch_simulation_settings(the_sim);
 
+   
+    /*
+     * Debugging
+     */  
+    if (DEBUG_ON) the_monitor->monitor_handler_dump_state(the_monitor);
+
 
     return; 
 }
+
+
+void simulator_monitor_handler_dump_state(monitor *self)
+{
+    /*
+     * Dump interesting state about @self
+     */
+    printf("---simulator_monitor_handler_dump_state---\n");
+
+    switch(self->mode)
+    {
+	case SHORT_TERM:
+	{
+	    printf("monitoring_mode: SHORT_TERM\n");
+	    break;	    
+	}
+    	case LONG_TERM:
+	{
+	    printf("monitoring_mode: LONG_TERM\n");
+	    break;	    
+	}
+	case DETECT:
+	{
+	    printf("monitoring_mode: DETECT\n");
+	    break;	    
+	}
+	default: 
+	{
+	    printf("invalid monitoring mode!\n");
+	    abort();
+	}
+    }
+    
+    switch(self->status)
+    {
+	case NORMAL:
+	{
+	    printf("detection_status: NORMAL\n");
+	    break;	    
+	}
+    	case RATE_HIGH:
+	{
+	    printf("detection_status: RATE_HIGH\n");
+	    break;	    
+	}
+	case RATE_LOW:
+	{
+	    printf("detection_status: RATE_LOW\n");
+	    break;	    
+	}
+	case RISING_RAPIDLY:
+	{
+	    printf("detection_status: RISING_RAPIDLY\n");
+	    break;	    
+	}
+	case FALLING_RAPIDLY:
+	{
+	    printf("detection_status: FALLING_RAPIDLY\n");
+	    break;	    
+	}
+	default: 
+	{
+	    printf("invalid detection status!\n");
+	    abort();
+	}
+    }
+     
+    self->print_heartbeat_history(self);
+
+
+    /*
+     * Dump interesting state about "the_sim"
+     */ 
+    printf("last_heartbeat_simulated: %u\n", the_sim->last_heartbeat_simulated);
+    
+    if (the_sim->direction == POS) printf("direction: POS\n");
+    else printf("direction: NEG\n");
+    
+    switch(the_sim->mode)
+    {
+	case NONE:
+	{
+	    printf("simulation mode: NONE\n");
+	    break;	    
+	}
+    	case LINEAR:
+	{
+	    printf("simulation mode: LINEAR\n");
+	    printf("  slope (m) = %u\n", the_sim->heartbeat_change_val); 
+	    break;	    
+	}
+	case QUADRATIC:
+	{
+	    printf("simulation mode: QUADRATIC\n");
+	    printf("  last input (x) = %u\n", the_sim->heartbeat_change_val); 
+	    printf("  curr_a_term (a) = %f\n", curr_a_term); 
+	    break;	    
+	}
+	case EXPONENTIAL:
+	{
+	    printf("simulation mode: EXPONENTIAL\n");
+	    printf("  last input (x) = %u\n", the_sim->heartbeat_change_val); 
+	    printf("  curr_a_term (a) = %f\n", curr_a_term); 
+	    break;	    
+	}
+	default: 
+	{
+	    printf("invalid simulation mode!\n");
+	    abort();
+	}
+    }
+
+    printf("num_seconds_to_simulate_curr_settings: %u\n", the_sim->num_seconds_to_simulate_curr_settings);
+
+    printf("num_seconds_simulated: %u\n", the_sim->num_seconds_simulated);
+    
+    
+    printf("\n");
+    return;
+}
+
+
 
 

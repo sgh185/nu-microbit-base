@@ -16,6 +16,7 @@
 struct simulator;
 
 
+#define SEED 42
 #define MAX_HEARTBEAT_LINEAR_CHANGE 30
 #define MAX_HEARTBEAT 210
 #define MIN_HEARTBEAT 40
@@ -58,6 +59,8 @@ typedef struct simulator {
     sign direction ; /* Heartbeat decreasing or increasing */
 
     expander heartbeat_expander ; /* Modifier of .heartbeat_change_val over simulation */
+
+    expansion_mode mode ;
 
 } simulator ;
 
@@ -114,4 +117,6 @@ void simulator_monitor_handler_cleanup(monitor *self) ;
 void simulator_get_new_heartbeat(monitor *self) ;
 
 void simulator_heartbeat_timer_handler(void *state) ;
+
+void simulator_monitor_handler_dump_state(monitor *self) ;
 
