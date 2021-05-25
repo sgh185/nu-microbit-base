@@ -333,7 +333,7 @@ void simulator_monitor_handler_setup(monitor *self)
     /*
      * Set up @self's modes 
      */ 
-    self->mode = SHORT_TERM;
+    self->mode = PERIODIC;
     self->status = NORMAL;
 
 
@@ -480,14 +480,14 @@ void simulator_monitor_handler_dump_state(monitor *self)
 
     switch(self->mode)
     {
-	case SHORT_TERM:
+	case PERIODIC:
 	{
-	    printf("monitoring_mode: SHORT_TERM\n");
+	    printf("monitoring_mode: PERIODIC\n");
 	    break;	    
 	}
-    	case LONG_TERM:
+    	case QUERY:
 	{
-	    printf("monitoring_mode: LONG_TERM\n");
+	    printf("monitoring_mode: QUERY\n");
 	    break;	    
 	}
 	case DETECT:

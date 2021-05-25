@@ -21,8 +21,8 @@
 
 typedef enum {
     
-    SHORT_TERM=0,
-    LONG_TERM,
+    PERIODIC=0,
+    QUERY,
     DETECT
 
 } monitoring_mode ;
