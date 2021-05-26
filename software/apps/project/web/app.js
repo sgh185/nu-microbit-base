@@ -16,13 +16,14 @@ const path = argv["d"];
 console.log(path);
 
 const SerialPort = require('serialport');
+const Readline = require('@serialport/parser-readline')
+
 const device = new SerialPort(path, { 
     baudRate: 38400 
 });
 
-device.on('data', (data) => {
-    console.log("" + data);
-});
+const parser = device.pipe(new Readline({ delimiter: '\n' }))
+parser.on('data', console.log)
 
 device.on('error', (err) => {
     console.log("Error!");
