@@ -10,6 +10,13 @@
 
 
 /*
+ * Computational Macros 
+ */ 
+#define modulo_incr(val, base) ((val + 1) % base)
+#define modulo_decr(val, base) ((val + base - 1) % base)
+
+
+/*
  * Calculation Methods
  */ 
 extern uint32_t __sum_bytes (

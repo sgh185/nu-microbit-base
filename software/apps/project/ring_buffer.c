@@ -8,9 +8,6 @@
 
 #include "ring_buffer.h"
 
-#define modulo_incr(val, base) ((val + 1) % base)
-#define modulo_decr(val, base) ((val + base - 1) % base)
-
 AI void _incr_rb_next(ring_buffer *rb)
 {
     uint8_t curr_idx = rb->next_index_to_fill;
