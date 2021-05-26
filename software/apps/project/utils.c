@@ -133,7 +133,7 @@ AI float __lsr_slope_bytes (
 
 
 /*
- * ---------- Bitwise Operatiosn ----------
+ * ---------- Operations  ----------
  */ 
 AI bool __get_bit (
     uint8_t octet,
@@ -144,6 +144,12 @@ AI bool __get_bit (
      * Fetch the @index_th bit from @octet 
      */  
     return ((octet >> index) & 1);
+}
+
+
+AI uint32_t HZ(float num_hz)
+{
+    return ((uint32_t) (32768.0F / num_hz)) ;
 }
 
 

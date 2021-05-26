@@ -38,10 +38,12 @@ extern float __lsr_slope_bytes (
 
 
 /*
- * Bitwise Operations 
+ * Operations 
  */ 
 extern bool __get_bit (
     uint8_t octet,
     uint8_t index
 ) ;
 
+
+extern uint32_t HZ(float num_hz) ; 
