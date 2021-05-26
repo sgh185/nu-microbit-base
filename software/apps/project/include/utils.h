@@ -36,3 +36,12 @@ extern float __lsr_slope_bytes (
     uint8_t N 
 ) ;
 
+
+/*
+ * Bitwise Operations 
+ */ 
+extern bool __get_bit (
+    uint8_t octet,
+    uint8_t index
+) ;
+

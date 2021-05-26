@@ -132,5 +132,18 @@ AI float __lsr_slope_bytes (
 }
 
 
+/*
+ * ---------- Bitwise Operatiosn ----------
+ */ 
+AI bool __get_bit (
+    uint8_t octet,
+    uint8_t index
+)
+{
+    /*
+     * Fetch the @index_th bit from @octet 
+     */  
+    return ((octet >> index) & 1);
+}
 
 
