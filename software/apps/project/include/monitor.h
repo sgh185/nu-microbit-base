@@ -27,6 +27,8 @@ typedef enum {
 
 } monitoring_mode ;
 
+
+#define NUM_DETECTION_STATUS 5
 typedef enum {
 
     NORMAL=0,
@@ -36,6 +38,8 @@ typedef enum {
     FALLING_RAPIDLY
     
 } detection_status ;
+
+extern uint8_t detection_status_chars[NUM_DETECTION_STATUS];
 
 
 typedef struct monitor {
@@ -68,6 +72,10 @@ typedef struct monitor {
      * Functionality methods
      */ 
     void (*get_new_heartbeat)(struct monitor *self) ;
+
+    void (*display_last_heartbeat)(struct monitor *self) ;
+
+    void (*display_detection_status)(struct monitor *self) ;
 
     void (*change_monitoring_mode)(
 	struct monitor *self, 
@@ -127,6 +135,10 @@ void base_change_monitoring_mode (
 ) ;
 
 void base_print_heartbeat_history(monitor *self) ;
+
+void base_display_last_heartbeat(monitor *self) ;
+
+void base_display_detection_status(monitor *self) ;
 
 monitor *bootstrap_monitor(
     void (*setup_func)(monitor *),

@@ -5,9 +5,18 @@
  */ 
 #include "monitor.h"
 #include "utils.h"
+#include "display.h"
 
 
 monitor *the_monitor = NULL ;
+
+uint8_t detection_status_chars[NUM_DETECTION_STATUS] = {
+    78, /* N=NORMAL */
+    72, /* H=RATE_HIGH */
+    76, /* L=RATE_LOW */
+    82, /* R=RISING_RAPIDLY */
+    70  /* F=FALLING_RAPIDLY */
+} ;
 
 
 /*
@@ -249,6 +258,74 @@ void base_print_heartbeat_history(monitor *self)
 }
 
 
+void base_display_last_heartbeat(monitor *self)
+{
+    /*
+     * TOP
+     *
+     * Display the latest heartbeat from @self onto the
+     * LED matrix of the MicroBit
+     */ 
+
+    /*
+     * Fetch last heartbeat atomically
+     */ 
+    __disable_irq();
+    uint8_t last = rb_get_latest(&(self->heartbeat_history));
+    __enable_irq();    
+
+
+    /*
+     * Place the latest heartbeat into the global display buffer 
+     */
+    uint8_t num_chars = (last > 99) ? 3 : 2;
+    set_up_new_display(
+	last, /* @val */ 
+	num_chars, /* @len */
+	true, /* Convert @val to ASCII */
+	true /* Clear display after finishing */
+    );
+
+    
+    return;
+}
+
+
+void base_display_detection_status(monitor *self)
+{
+    /*
+     * TOP
+     *
+     * Display the detection status from @self onto the
+     * LED matrix of the MicroBit
+     */ 
+
+    /*
+     * Fetch detection status atomically 
+     */ 
+    __disable_irq();
+    detection_status curr_status = self->status;
+    __enable_irq();
+
+
+    /*
+     * Place the detection status, converted into an ASCII 
+     * string, into the global display buffer 
+     */
+    uint8_t status_ascii = detection_status_chars[curr_status];
+    uint8_t num_chars = 1;
+    set_up_new_display(
+	status_ascii, /* @val */
+	num_chars, /* @len */
+	false, /* Do NOT convert @val to ASCII */
+	false /* Do NOT clear display */ 
+    );
+
+   
+    return;
+}
+
+
 monitor *bootstrap_monitor(
     void (*setup_func)(monitor *),
     app_timer_id_t const *timer
@@ -298,6 +375,12 @@ monitor *bootstrap_monitor(
 	NULL
     );
 
+
+    /*
+     * Set up LED matrix display functionality
+     */ 
+    set_up_leds();
+    
 
     return new_monitor;
 }
