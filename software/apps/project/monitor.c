@@ -6,6 +6,7 @@
 #include "monitor.h"
 #include "utils.h"
 #include "display.h"
+#include "button.h"
 
 
 monitor *the_monitor = NULL ;
@@ -384,6 +385,12 @@ monitor *bootstrap_monitor(
      * Set up LED matrix display functionality
      */ 
     set_up_leds();
+
+
+    /*
+     * Set up button functionality
+     */ 
+    set_up_buttons();
     
 
     return new_monitor;

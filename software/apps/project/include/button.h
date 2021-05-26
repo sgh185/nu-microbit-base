@@ -8,4 +8,4 @@
 
 #include "system_headers.h"
 
-void set_up_button(void);
+void set_up_buttons(void);
