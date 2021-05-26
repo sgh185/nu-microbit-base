@@ -21,8 +21,9 @@ struct simulator;
 #define MAX_HEARTBEAT 210
 #define MIN_HEARTBEAT 40
 #define MAX_SIMULATION_INTERVAL 10
-
+#define NUM_EXPANSION_MODES 4
 #define NUM_SIGNS 2
+
 typedef enum {
 
     POS=0,
@@ -31,7 +32,6 @@ typedef enum {
 } sign ;
 
 
-#define NUM_EXPANSION_MODES 4
 typedef enum {
 
     NONE=0,
@@ -85,7 +85,6 @@ extern expander expanders[NUM_EXPANSION_MODES] ;
 extern float a_terms[NUM_A_TERMS] ;
 
 extern float curr_a_term ;
-
 
 
 /*

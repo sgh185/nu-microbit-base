@@ -8,7 +8,7 @@
 
 simulator *the_sim = NULL;
 
-float a_terms[3] = { 0.05F, 0.10F, 0.15F } ;
+float a_terms[NUM_A_TERMS] = { 0.05F, 0.10F, 0.15F } ;
 
 float curr_a_term ;
 
