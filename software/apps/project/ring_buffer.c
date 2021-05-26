@@ -7,6 +7,7 @@
  */ 
 
 #include "ring_buffer.h"
+#include "utils.h"
 
 AI void _incr_rb_next(ring_buffer *rb)
 {

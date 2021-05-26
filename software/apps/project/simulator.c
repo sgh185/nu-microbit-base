@@ -440,8 +440,6 @@ void simulator_heartbeat_timer_handler(void *state)
      * 1) Fetch the new heartbeat, add to history
      * 2) Display the right features and calculate detection
      *    status if necessary for the current monitoring mode
-     * 2) Calculate the detection status based on the 
-     *    new history available  
      * 3) Update the simulation settings, if necessary 
      */ 
     

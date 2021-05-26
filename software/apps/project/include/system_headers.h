@@ -14,6 +14,7 @@
 #include <assert.h> 
 
 #include "nrf_gpio.h"
+#include "nrfx_gpiote.h"
 #include "nrf_delay.h"
 #include "app_timer.h"
 #include "microbit_v2.h"

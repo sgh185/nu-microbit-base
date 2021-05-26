@@ -18,7 +18,7 @@ static void _button_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
      */ 
     switch(pin) 
     {
-	case BUTTON1: 
+	case BTN_A: 
 	{
 	    /*
 	     * Toggle modes
@@ -28,12 +28,12 @@ static void _button_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 	    __enable_irq();
 	    break;
 	}
-	case BUTTON2: 
+	case BTN_B: 
 	{
 	    /*
 	     * Display the last heartbeat on demand 
 	     */
-	    if (the_monitor->mode == QUERY) the_monitor->display_last_heartbeat(the_monitor)
+	    if (the_monitor->mode == QUERY) the_monitor->display_last_heartbeat(the_monitor);
 	    break;
 	}
     }
@@ -77,11 +77,8 @@ void set_up_buttons(void) {
     ret_code_t err_code = nrfx_gpiote_init();
     APP_ERROR_CHECK(err_code);
 
-    gpio_in_with_interrupt(BUTTON1, NRF_GPIO_PIN_PULLUP, _button_handler);
-    gpio_in_with_interrupt(BUTTON2, NRF_GPIO_PIN_PULLUP, _button_handler);
-    gpio_in_with_interrupt(BUTTON3, NRF_GPIO_PIN_PULLUP, _button_handler);
-    gpio_in_with_interrupt(BUTTON4, NRF_GPIO_PIN_PULLUP, _button_handler);
-
+    _gpio_in_with_interrupt(BTN_A, NRF_GPIO_PIN_PULLUP, _button_handler);
+    _gpio_in_with_interrupt(BTN_B, NRF_GPIO_PIN_PULLUP, _button_handler);
 
     return;
 }
