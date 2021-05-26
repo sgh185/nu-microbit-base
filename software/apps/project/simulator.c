@@ -438,6 +438,8 @@ void simulator_heartbeat_timer_handler(void *state)
      *
      * We're at a 1-second interval. Follow these steps:
      * 1) Fetch the new heartbeat, add to history
+     * 2) Display the right features and calculate detection
+     *    status if necessary for the current monitoring mode
      * 2) Calculate the detection status based on the 
      *    new history available  
      * 3) Update the simulation settings, if necessary 
@@ -452,10 +454,21 @@ void simulator_heartbeat_timer_handler(void *state)
     /*
      * <Step 2.>
      */  
-    the_monitor->set_detection_status(the_monitor);
-
-
-    the_monitor->display_last_heartbeat(the_monitor);
+    switch (the_monitor->mode)
+    {
+	case PERIODIC:
+	{
+	    the_monitor->display_last_heartbeat(the_monitor);
+	    break; 
+	}
+    	case QUERY: { break; }
+	case DETECT:
+	{
+	    the_monitor->set_detection_status(the_monitor);
+	    the_monitor->display_detection_status(the_monitor);
+	    break; 
+	}
+    }
 
 
     /*
