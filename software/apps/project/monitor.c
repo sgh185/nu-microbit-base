@@ -371,7 +371,7 @@ monitor *bootstrap_monitor(
 
     app_timer_start(
 	*timer,
-	32768, /* 1 second */
+	HZ(0.5), /* 2 second */
 	NULL
     );
 

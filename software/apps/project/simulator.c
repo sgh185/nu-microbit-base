@@ -351,6 +351,8 @@ void simulator_monitor_handler_setup(monitor *self)
      * Set functionality methods
      */ 
     self->get_new_heartbeat = simulator_get_new_heartbeat;
+    self->display_last_heartbeat = base_display_last_heartbeat;
+    self->display_detection_status = base_display_detection_status;
     self->change_monitoring_mode = base_change_monitoring_mode; 
     self->print_heartbeat_history = base_print_heartbeat_history;
     self->monitor_handler_cleanup = simulator_monitor_handler_cleanup; 
@@ -451,6 +453,9 @@ void simulator_heartbeat_timer_handler(void *state)
      * <Step 2.>
      */  
     the_monitor->set_detection_status(the_monitor);
+
+
+    the_monitor->display_last_heartbeat(the_monitor);
 
 
     /*

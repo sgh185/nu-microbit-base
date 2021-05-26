@@ -10,8 +10,6 @@
 APP_TIMER_DEF(switch_timer);
 APP_TIMER_DEF(display_timer);
 
-#define HZ(num) (32768 / num) 
-
 #define ROW_SIZE 5
 #define COL_SIZE 5
 
@@ -187,20 +185,9 @@ uint8_t cur_row_handled = ROW_SIZE - 1;
 static void ___clear_led_matrix(void)
 {
     /*
-     * Clear entire display 
+     * Clear "led_state" so displays are blank 
      */
-    nrf_gpio_pin_clear(LED_COL1);
-    nrf_gpio_pin_clear(LED_COL2);
-    nrf_gpio_pin_clear(LED_COL3);
-    nrf_gpio_pin_clear(LED_COL4);
-    nrf_gpio_pin_clear(LED_COL5);
-    nrf_gpio_pin_clear(LED_ROW1);
-    nrf_gpio_pin_clear(LED_ROW2);
-    nrf_gpio_pin_clear(LED_ROW3);
-    nrf_gpio_pin_clear(LED_ROW4);
-    nrf_gpio_pin_clear(LED_ROW5);
-
-
+    memset(led_state, 0, sizeof(led_state));
     return;
 }
 
@@ -276,9 +263,9 @@ static void __switch_char_callback(void *state)
      * Clear the matrix if there's no more characters to 
      * display, if @clear_after_display allows it
      */     
-    if (next_char_idx_to_display == curr_num_chars_to_display)
+    if (next_char_idx_to_display == curr_num_chars_to_display) 
     {
-	if (turn_off_after_display) ___clear_led_matrix();
+	if (turn_off_after_display) { printf("OFFFFFF\n"); ___clear_led_matrix(); }
 	return;
     }
 
@@ -382,17 +369,25 @@ void set_up_leds(void)
     nrf_gpio_pin_dir_set(LED_ROW3, NRF_GPIO_PIN_DIR_OUTPUT);
     nrf_gpio_pin_dir_set(LED_ROW4, NRF_GPIO_PIN_DIR_OUTPUT);
     nrf_gpio_pin_dir_set(LED_ROW5, NRF_GPIO_PIN_DIR_OUTPUT);
-    ___clear_led_matrix();
+    nrf_gpio_pin_clear(LED_COL1);
+    nrf_gpio_pin_clear(LED_COL2);
+    nrf_gpio_pin_clear(LED_COL3);
+    nrf_gpio_pin_clear(LED_COL4);
+    nrf_gpio_pin_clear(LED_COL5);
+    nrf_gpio_pin_clear(LED_ROW1);
+    nrf_gpio_pin_clear(LED_ROW2);
+    nrf_gpio_pin_clear(LED_ROW3);
+    nrf_gpio_pin_clear(LED_ROW4);
+    nrf_gpio_pin_clear(LED_ROW5);
 
     
     /*
      * Set up timers
      */ 
-    app_timer_init();
     app_timer_create(&display_timer, APP_TIMER_MODE_REPEATED, __display_leds_callback);
     app_timer_create(&switch_timer, APP_TIMER_MODE_REPEATED, __switch_char_callback);
-    app_timer_start(display_timer, HZ(500), NULL);
-    app_timer_start(switch_timer, HZ(4), NULL);
+    app_timer_start(display_timer, HZ(500.0), NULL);
+    app_timer_start(switch_timer, HZ(3.0), NULL);
 
 
     return;
