@@ -19,6 +19,7 @@
 #define RAPID_FALL -16.0F
 #define RECENT 5
 
+#define NUM_MONITORING_MODES 3
 typedef enum {
     
     PERIODIC=0,
@@ -77,10 +78,7 @@ typedef struct monitor {
 
     void (*display_detection_status)(struct monitor *self) ;
 
-    void (*change_monitoring_mode)(
-	struct monitor *self, 
-	monitoring_mode new_mode
-    ) ;
+    void (*change_monitoring_mode)(struct monitor *self) ;
 
     void (*print_heartbeat_history)(struct monitor *self) ;
 
@@ -129,10 +127,7 @@ void base_set_detection_status(monitor *self) ;
  * monitor abstraction.
  */ 
 
-void base_change_monitoring_mode (
-    monitor *self, 
-    monitoring_mode new_mode
-) ;
+void base_change_monitoring_mode (monitor *self) ;
 
 void base_print_heartbeat_history(monitor *self) ;
 

@@ -230,14 +230,18 @@ void base_set_detection_status(monitor *self)
  * ----------- Base Functionality Methods ----------
  */ 
 
-void base_change_monitoring_mode (
-    monitor *self, 
-    monitoring_mode new_mode
-)
+void base_change_monitoring_mode(monitor *self)
 {
     /*
-     * Set @self->mode
+     * TOP
+     *
+     * This flips through the monitoring modes and 
+     * assigns it to @self->mode 
+     *
+     * This will act as part of a button interrupt handler
      */ 
+    monitoring_mode curr_mode = self->mode;
+    monitoring_mode new_mode = curr_mode = modulo_incr(curr_mode, NUM_MONITORING_MODES); 
     self->mode = new_mode;
 }
 
