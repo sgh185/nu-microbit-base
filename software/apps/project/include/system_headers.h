@@ -26,5 +26,8 @@
 
 #define AI __attribute__((always_inline)) inline
 
-#define DEBUG_ON 1
+#define DEBUG_ON 0
 #define DEBUG_PRINT if (DEBUG_ON) printf
+
+#define SERIAL_ON 1
+#define SERIAL_PRINT if (SERIAL_ON) printf

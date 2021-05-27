@@ -244,6 +244,10 @@ void base_change_monitoring_mode(monitor *self)
     monitoring_mode curr_mode = self->mode;
     monitoring_mode new_mode = curr_mode = modulo_incr(curr_mode, NUM_MONITORING_MODES); 
     self->mode = new_mode;
+    SERIAL_PRINT("MODE %u\n", new_mode);
+
+
+    return;
 }
 
 

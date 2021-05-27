@@ -31,7 +31,15 @@ int main(void)
      * Setup board and monitor
      */
     printf("Board started!\n");
-    
+#if 0
+    while (1) {
+	printf("MODE 0\n");
+	printf("DATA 108\n");
+	printf("RATE F\n");
+
+	nrf_delay_ms(1000);
+    }
+#endif
     the_monitor = 
 	bootstrap_monitor(
 	    monitor_setups[SETUP_NO],

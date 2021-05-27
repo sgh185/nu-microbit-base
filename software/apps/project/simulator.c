@@ -447,6 +447,8 @@ void simulator_heartbeat_timer_handler(void *state)
      * <Step 1.>
      */ 
     the_monitor->get_new_heartbeat(the_monitor);
+    uint8_t last_heartbeat = rb_get_latest(&(the_monitor->heartbeat_history)); 
+    SERIAL_PRINT("BEAT %u\n", last_heartbeat); 
 
 
     /*
@@ -463,6 +465,7 @@ void simulator_heartbeat_timer_handler(void *state)
 	case DETECT:
 	{
 	    the_monitor->set_detection_status(the_monitor);
+	    SERIAL_PRINT("RATE %c\n", detection_status_chars[the_monitor->status]);
 	    the_monitor->display_detection_status(the_monitor);
 	    break; 
 	}

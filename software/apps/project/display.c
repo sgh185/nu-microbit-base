@@ -265,7 +265,7 @@ static void __switch_char_callback(void *state)
      */     
     if (next_char_idx_to_display == curr_num_chars_to_display) 
     {
-	if (turn_off_after_display) { printf("OFFFFFF\n"); ___clear_led_matrix(); }
+	if (turn_off_after_display) ___clear_led_matrix();
 	return;
     }
 
