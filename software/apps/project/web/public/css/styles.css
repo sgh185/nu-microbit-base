@@ -1,0 +1,22 @@
+html {
+  overflow: hidden;
+}
+
+.wrapper {
+  width: 60%;
+  margin: 8vh auto;
+  text-align: center;
+}
+
+.wrapper h1 {
+  margin: 16px 0;
+}
+
+.results {
+  margin-top: 10%;
+  text-align: left;
+}
+
+.results li{
+  margin: 10px 0;
+}
