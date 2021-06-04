@@ -41,15 +41,6 @@ typedef enum {
 } max30102_regs_t ;
 
 
-#define NUM_SIGNS 2
-typedef enum {
-
-    POS=0,
-    NEG=1
-
-} sign ;
-
-
 #define DEPRECATED 1
 #ifndef DEPRECATED
 #define DC_FILTER_ALPHA 0.95F
@@ -109,7 +100,7 @@ extern sensor *the_sensor ;
  */ 
 void sensor_max30102_init(const nrf_twi_mngr_t *i2c);
 
-bool sensor_check_for_new_heartbeat(sensor *sen);
+void sensor_check_for_new_heartbeat(sensor *sen);
 
 float sensor_perform_running_average_filter(
     float sample,

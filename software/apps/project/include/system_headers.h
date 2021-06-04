@@ -15,6 +15,7 @@
 
 #include "nrf_gpio.h"
 #include "nrfx_gpiote.h"
+#include "nrf_twi_mngr.h"
 #include "nrf_delay.h"
 #include "app_timer.h"
 #include "microbit_v2.h"
@@ -22,7 +23,7 @@
 #define MONITOR_TYPES 2
 #define SIMULATOR 0
 #define SENSOR 1
-#define SETUP_NO SIMULATOR
+#define SETUP_NO SENSOR 
 
 #define AI __attribute__((always_inline)) inline
 
