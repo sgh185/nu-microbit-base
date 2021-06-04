@@ -6,6 +6,7 @@
 
 #include "monitor.h"
 #include "simulator.h"
+#include "sensor.h"
 #include "utils.h"
 
 /*
@@ -15,7 +16,7 @@ typedef void (*monitor_setup)(monitor *);
 
 monitor_setup monitor_setups[MONITOR_TYPES] = {
     simulator_monitor_handler_setup,
-    NULL
+    sensor_monitor_handler_setup 
 };
 
 

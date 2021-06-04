@@ -364,13 +364,13 @@ monitor *bootstrap_monitor(
     /*
      * Set up the monitor properly using @setup_func
      */
+    app_timer_init();
     new_monitor->monitor_handler_setup(new_monitor);
 
 
     /*
      * Set up timer functionality
      */ 
-    app_timer_init();
 
     app_timer_create(
 	timer, 

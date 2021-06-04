@@ -5,6 +5,9 @@
  */ 
 
 #include "sensor.h"
+#include "utils.h"
+
+APP_TIMER_DEF(sensor_query_timer);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 1, 0);
 
@@ -98,7 +101,7 @@ static uint32_t fifo_read(void)
 }
 
 
-void __sensor_query_callback(void *state)
+static void __sensor_query_callback(void *state)
 {
     /*
      * TOP --- Callback for the sensor query timer
@@ -183,7 +186,8 @@ void sensor_max30102_init(const nrf_twi_mngr_t *i2c)
     uint8_t ref = i2c_reg_read(MAX30102_ADDR, MAX30102_REG_REF_ID);
     uint8_t part = i2c_reg_read(MAX30102_ADDR, MAX30102_REG_PART_ID);
     
-    if (DEBUG_ON) printf("REV_ID: %u\n", ref);
+    if (DEBUG_ON) printf("REV_ID: 0x%x\n", ref);
+    if (DEBUG_ON) printf("PART_ID: 0x%x\n", part);
     
     assert(
 	true
@@ -281,7 +285,7 @@ void sensor_monitor_handler_setup(monitor *self)
     /*
      * Initialize MAX30102 sensor 
      */ 
-    sensor_max30102_init();
+    sensor_max30102_init(&twi_mngr_instance);
 
 
     /*
