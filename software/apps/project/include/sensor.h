@@ -90,6 +90,13 @@ typedef struct {
 
 
 /*
+ * Heartbeat threshold --- based on an absolute number
+ * of ADC counts with respect to a filtered value
+ */ 
+#define BEAT_THRESHOLD 999.0F
+
+
+/*
  * Global sensor object
  */ 
 extern sensor *the_sensor ;
@@ -100,7 +107,10 @@ extern sensor *the_sensor ;
  */ 
 void sensor_max30102_init(const nrf_twi_mngr_t *i2c);
 
-void sensor_check_for_new_heartbeat(sensor *sen);
+void sensor_check_for_new_heartbeat(
+    float filtered_value,
+    sensor *sen
+);
 
 float sensor_perform_running_average_filter(
     float sample,

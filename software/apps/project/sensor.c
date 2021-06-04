@@ -87,7 +87,7 @@ static uint32_t fifo_read(void)
   
 
     /*
-     * Reconstruct the read value
+     * Reconstruct the read value, only use RED LED 
      */  
     uint32_t fifo_read = 0; 
     fifo_read |= rx_buf[0] & 0x03;
@@ -108,11 +108,41 @@ static void __sensor_query_callback(void *state)
      * Performs the following steps:
      * 1) Fetch the next sample (NOTE --- not checking availability, 
      *    relying on the frequency of callbacks to avoid this)
-     * 2) Check if there is a new heartbeat --- if so, process
+     * 2) Filter the sample (using dcf, running mean, etc.)
+     *    NOTE --- currently only using running average
+     * 3) Check if there is a new heartbeat using the filtered
+     *    value --- if so, calculate the BPM
      */ 
 
+    /*
+     * <Step 1.>
+     */ 
     uint32_t fifo_fetch = fifo_read();
-    printf("fifo_fetch: %lu\n", fifo_fetch);
+    DEBUG_PRINT("__sensor_query_callback: fifo_fetch = %lu\n", fifo_fetch);
+
+
+    /*
+     * <Step 2.>
+     */ 
+    float sample = ((float) fifo_fetch); 
+    float filtered_against_ra = 
+	sensor_perform_running_average_filter(
+	    sample,
+	    the_sensor
+	);
+
+    DEBUG_PRINT("__sensor_query_callback: filtered = %f\n", filtered_against_ra);
+
+
+    /*
+     * <Step 3.>
+     */ 
+    sensor_check_for_new_heartbeat(
+	filtered_against_ra,
+	the_sensor
+    );
+
+
     return;
 }
 
@@ -186,8 +216,8 @@ void sensor_max30102_init(const nrf_twi_mngr_t *i2c)
     uint8_t ref = i2c_reg_read(MAX30102_ADDR, MAX30102_REG_REF_ID);
     uint8_t part = i2c_reg_read(MAX30102_ADDR, MAX30102_REG_PART_ID);
     
-    if (DEBUG_ON) printf("REV_ID: 0x%x\n", ref);
-    if (DEBUG_ON) printf("PART_ID: 0x%x\n", part);
+    DEBUG_PRINT("REV_ID: 0x%x\n", ref);
+    DEBUG_PRINT("PART_ID: 0x%x\n", part);
     
     assert(
 	true
@@ -200,8 +230,85 @@ void sensor_max30102_init(const nrf_twi_mngr_t *i2c)
 }
 
 
-void sensor_check_for_new_heartbeat(sensor *sen)
+void sensor_check_for_new_heartbeat(
+    float filtered_value, 
+    sensor *sen
+)
 {
+    /*
+     * TOP
+     *
+     * NOTE --- There are some sins in this method. Heartbeat 
+     * detection is performed using crude black magic. Rate 
+     * calculation is performed using Wisconsin cheese. Try
+     * to ignore.
+     *
+     * Bits and pieces taken from: 
+     * https://github.com/sparkfun/pxt-gator-particle/blob/master/MAX30105.cpp
+     */
+
+    /*
+     * <Step 1.>
+     *
+     * Check if @filtered_value is higher than the preset
+     * threshold (BEAT_THRESHOLD) --- if this is the case, we've
+     * detected a "heartbeat" (more cheese below) 
+     *
+     * Update @sen's state --- number of queries
+     */
+    sen->num_queries_since_last_heartbeat += 1;
+    DEBUG_PRINT("q: %lu\n", sen->num_queries_since_last_heartbeat);
+    bool heartbeat_detected = false;
+    if (filtered_value >= BEAT_THRESHOLD) heartbeat_detected |= true; 
+
+
+    /*
+     * <Step 2.>
+     * 
+     * If no heartbeat was detected, nothing to do
+     */ 
+    if (!heartbeat_detected) return;
+
+
+    /*
+     * <Step 2. cont.>
+     *
+     * Otherwise, we have a heartbeat! Calculate the apparent 
+     * heart rate as follows: 
+     *
+     *       (MAX30102_SAMPLING_RATE) * 60
+     * ----------------------------------------- = N BPM
+     * (@sen->num_queries_since_last_heartbeat)
+     */
+    uint32_t BPM = (uint32_t) ((MAX30102_SAMPLING_RATE * 60.0F) / ((float) sen->num_queries_since_last_heartbeat));
+    DEBUG_PRINT("BPM: %lu\n", BPM);
+
+
+    /*
+     * <Step 2. cont.>
+     *
+     * We have to do some sanity checking before getting too excited 
+     * --- the method of detecting a heartbeat is complete ass. Check 
+     * against predetermined LOW and HIGH heartbeat thresholds to make
+     * sure that the heart rate is not insane 
+     *
+     * If the rate calculated is dumb --- fuck it. No other state
+     * will be modified if the rate is unreasonable.
+     */ 
+    if (false 
+	|| (BPM >= HIGH_HEARTBEAT)
+	|| (BPM <= LOW_HEARTBEAT)) return;
+
+
+    /*
+     * <Step 3.>
+     *
+     * Update @sen to reflect the new heartbeat! 
+     */ 
+    sen->current_heart_rate = ((uint8_t) BPM);
+    sen->num_queries_since_last_heartbeat = 0;
+
+
     return;
 } 
 
