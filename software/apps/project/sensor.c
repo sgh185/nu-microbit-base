@@ -155,6 +155,10 @@ static void __sensor_query_callback(void *state)
 void sensor_max30102_init(const nrf_twi_mngr_t *i2c)
 {
     /*
+     * Credit: https://github.com/LuisTrapero/MAX30102_library/blob/master/src/MAX30102_lib.c
+     */ 
+
+    /*
      * Initialize I2C peripheral and driver 
      */  
     nrf_drv_twi_config_t i2c_config = NRF_DRV_TWI_DEFAULT_CONFIG;
