@@ -23,7 +23,7 @@
 #define MONITOR_TYPES 2
 #define SIMULATOR 0
 #define SENSOR 1
-#define SETUP_NO SENSOR 
+#define SETUP_NO SIMULATOR 
 
 #define AI __attribute__((always_inline)) inline
 
